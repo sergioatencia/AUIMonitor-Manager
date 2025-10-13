@@ -1,0 +1,28 @@
+{
+  "name": "auimonitor-manager",
+  "version": "1.0.0",
+  "description": "Aplicación de monitorización y gestor de adaptaciones para aplicaciones AUI.",
+  "license": "ISC",
+  "author": "Atencia M., Sergio",
+  "keywords": [
+    "AUI",
+    "adaptation",
+    "electron",
+    "monitoring",
+    "management",
+    "accessibility"
+  ],
+  "type": "commonjs",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "-": "^0.0.1",
+    "@google/genai": "^1.24.0",
+    "dotenv": "^17.2.3",
+    "g": "^2.0.1",
+    "npm": "^11.6.2",
+    "ws": "^8.18.3"
+  }
+}

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitor 🔧</title>
+    <link rel="stylesheet" href="../styles/monitor.css">
+</head>
+
+<body>
+    <div class="page-container">
+        <aside class="sidebar">
+            <header>
+                <h1>Monitor</h1>
+            </header>
+            <nav>
+                <ul>
+                    <li><a href="#info" class="active">Información general</a></li>
+                    <li><a href="#confi">Configuración</a></li>
+                    <li><a href="#about">Acerca de</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Contenido principal -->
+        <main class="main-content">
+            <!-- Sección Contexto de la plataforma -->
+            <section id="info">
+                <h1>Contexto de la plataforma</h1>
+                <form id="config-form">
+                    <div class="form-group">
+                        <p><strong>Hora:</strong> <span id="platform-time"></span></p>
+                        <p><strong>SO:</strong> <span id="platform-os"></span></p>
+                        <p><strong>Arquitectura:</strong> <span id="platform-arch"></span></p>
+                        <p><strong>Nº de núcleos:</strong> <span id="platform-core"></span></p>
+                        <p><strong>RAM:</strong> <span id="platform-ram"></span> GB</p>
+                        <p><strong>Idioma por defecto:</strong> <span id="platform-defaultLang"></span></p>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Sección Contexto de adaptación -->
+            <section id="info2">
+                <h1>Contexto de la aplicación</h1>
+                <form>
+                    <div class="form-group">
+                        <p><strong>Nombre:</strong> <span id="app-name"></span></p>
+                        <p><strong>Chronium:</strong> <span id="app-chronium"></span></p>
+                        <p><strong>Versión de Node:</strong> <span id="app-node"></span></p>
+                        <p><strong>Versión de Electron:</strong> <span id="app-electron"></span></p>
+                        <p><strong>Tamaño de la ventana:</strong> <span id="app-screen"></span></p>
+                        <div id="adaptative-info">
+                            <h3>Adaptación aplicada:</h3>
+                            <ul id="default-adaptations"></ul>
+                            <br>
+                            <h3>Adaptaciones disponibles:</h3>
+                            <ul id="available-adaptations"></ul>
+                        </div>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Sección Contexto de adaptación -->
+            <section id="info3">
+                <h1>Contexto del usuario</h1>
+                <form>
+                    <div class="form-group">
+                        <p><strong>Nombre:</strong> <span id="user-name"></span></p>
+                        <p><strong>Apellidos:</strong> <span id="user-surname"></span></p>
+                        <p><strong>Sexo:</strong> <span id="user-gender"></span></p>
+                        <p><strong>Edad:</strong> <span id="user-age"></span></p>
+                        <p><strong>Email:</strong> <span id="user-email"></span></p>
+                        <p><strong>Dirección:</strong> <span id="user-address"></span></p>
+                        <p><strong>Ciudad:</strong> <span id="user-city"></span></p>
+                        <p><strong>País:</strong> <span id="user-country"></span></p>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Sección Acerca de -->
+            <section id="about">
+                <h2>Acerca de</h2>
+                <p>Información de la aplicación, versión y créditos.</p>
+            </section>
+        </main>
+    </div>
+    <script type="module" src="../scripts/monitor.js"></script>
+
+</body>
+
+</html>

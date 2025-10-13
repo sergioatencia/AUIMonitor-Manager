@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor de Adaptaciones 🔧</title>
+    <link rel="stylesheet" href="../styles/gestor.css">
+</head>
+
+<body>
+    <div class="page-container">
+        <aside class="sidebar">
+            <header>
+                <h1>Gestor de Adaptaciones</h1>
+            </header>
+            <nav>
+                <ul>
+                    <li><a href="#gener" class="active">Visión general</a></li>
+                    <li><a href="#confi">Configuración</a></li>
+                    <li><a href="#about">Acerca de</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Contenido principal -->
+        <main class="main-content">
+            <section id="gener">
+                <h1>Menu de adaptaciones</h1>
+                <div id="buttons-container">
+                </div>
+            </section>
+        <!-- Sección prompt -->
+            <section id="prompt">
+                <h2>Generación de prompt</h2>
+                <div class="prompt-block">
+                    <label for="prompt-input">Entrada</label>
+                    <textarea id="prompt-input" rows="5" placeholder="Escribe tu entrada aquí..."></textarea>
+                    <button id="send-prompt">Enviar</button>
+                </div>
+
+                <div class="prompt-block">
+                    <label for="prompt-output">Salida</label>
+                    <textarea id="prompt-output" rows="5" readonly placeholder="Aquí aparecerá la salida..."></textarea>
+                </div>
+            </section>
+
+            <!-- Sección Acerca de -->
+            <section id="about">
+                <h2>Acerca de</h2>
+                <p>Información de la aplicación, versión y créditos.</p>
+            </section>
+        </main>
+    </div>
+    <script type="module" src="../scripts/gestor.js"></script>
+
+</body>
+
+</html>
