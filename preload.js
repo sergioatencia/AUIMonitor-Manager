@@ -9,9 +9,56 @@ contextBridge.exposeInMainWorld('monitor', {
         console.log(`[Monitor] Enviando mutación ${mutation}=${value} al cliente ${uuid}.`);
         ipcRenderer.send('send-mutation', { uuid, mutation, value });
     },
-    generatePrompt: (text) => ipcRenderer.invoke('generate-prompt', text),
-    sendContext: (context) => {
-        console.log('[Monitor] Enviando contexto al main:', context);
-        ipcRenderer.send('send-context', context);
+    generatePrompt: (text) => ipcRenderer.send('send-context', {text, uuid}),
+    sendKnowledge: (knowledge) => {
+        console.log('[Monitor] Enviando conocimiento inicial al main:', knowledge);
+        ipcRenderer.send('send-knowledge', knowledge);
     }
 });
+
+contextBridge.exposeInMainWorld('bubble', {
+  togglePopup: () => ipcRenderer.send('toggle-popup'),
+  dragBubble: (x, y) => ipcRenderer.send('drag-bubble', { x, y }),
+  saveMessage: (msg) => ipcRenderer.send('new-message', msg),
+  getChatHistory: () => ipcRenderer.invoke('get-chat-history'),
+  showBubbleMenu: () => ipcRenderer.send('show-bubble-menu'),
+
+  // Función para registrar callback de sugerencias
+  onSuggestionButtons: (callback) => {
+    ipcRenderer.on('show-suggestion-buttons', (_, data) => callback(data));
+  },
+  // Enviar adaptaciones seleccionadas al servidor
+  applySuggestions: (uuid, adaptations) => {
+    ipcRenderer.send('apply-suggestions', { uuid, adaptations });
+  }
+});
+
+
+
+/*
+
+ipcRenderer.on('show-suggestion-buttons', (_, { uuid, buttons }) => {
+  const container = document.getElementById('suggestion-container');
+  container.innerHTML = '';
+
+  buttons.forEach(btn => {
+    const buttonEl = document.createElement('button');
+    buttonEl.textContent = btn.packageName;
+    buttonEl.classList.add('suggestion-btn');
+
+    buttonEl.addEventListener('click', () => {
+      // Mostrar motivos en el chat
+      btn.adaptations.forEach(a => {
+        const msg = document.createElement('div');
+        msg.textContent = `(${a.key}) ${a.motivo}`;
+        msg.classList.add('chat-msg');
+        container.appendChild(msg);
+      });
+
+      // Enviar al servidor las adaptaciones para aplicar mutaciones
+      ipcRenderer.send('apply-suggestions', { uuid, adaptations: btn.adaptations });
+    });
+
+    container.appendChild(buttonEl);
+  });
+*/

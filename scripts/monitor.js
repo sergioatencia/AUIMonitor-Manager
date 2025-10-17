@@ -12,114 +12,65 @@ const countryMap = {
     5: 'Bélgica'
 }
 
-let enviado = false;
-let platformInfo = null;
-let appInfo = null;
-let userInfo = null;
-
-function createJSONContext(userInfo, platformInfo, appInfo) {
-    const userData = {
-        nick: userInfo.nick,
-        nombre: userInfo.name,
-        edad: userInfo.age,
-        sexo: genreMap[userInfo.genre] || 'Desconocido',
-        pais: countryMap[userInfo.country] || 'Desconocido'
-    };
-    const appData = {
-        nombre: appInfo.app,
-        tipo: "catalogo de productos",
-        vChromium: appInfo.engine,
-        vNode: appInfo.node,
-        vElectron: appInfo.electron,
-        adapActual: appInfo.mutations,
-        adapDisponibles: appInfo.all_mutations
-    };
-    const platformData = {
-        hora: platformInfo.time,
-        so: platformInfo.os,
-        arquitectura: platformInfo.arch,
-        nCPUs: platformInfo.cpu,
-        ram: platformInfo.ram,
-        idiomaDefecto: platformInfo.defaultLang
-    };
-    const context = { usuario: userData, aplicacion: appData, plataforma: platformData };
-    console.log("Contexto para el LLM GEMINI: ", context);
-    window.monitor.sendContext(context);
-}
-
-
-
-function sendContext(){
-    if (!enviado && userInfo !== null && platformInfo !== null && appInfo !== null) {
-        createJSONContext(userInfo, platformInfo, appInfo);
-        enviado = true;
-    }
+function getAge(birthDate) {
+  birthDate = new Date(birthDate);
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const m = today.getMonth() - birthDate.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age;
 }
 
 window.monitor.onUpdate((data) => {
     const payload = data.info.payload;
+    const availAdapt = data.info.payload.applied_adaptations || data.info.payload.app.applied_adaptations;
+    const recentNavigation = data.info.payload.navigation || data.info.payload.app.navigation;
 
-    if (data.info.type === 'platform-info') {
-        document.getElementById('platform-time').textContent = payload.time;
-        document.getElementById('platform-os').textContent = payload.os;
-        document.getElementById('platform-arch').textContent = payload.arch;
-        document.getElementById('platform-core').textContent = payload.cpu;
-        document.getElementById('platform-ram').textContent = payload.ram;
-        document.getElementById('platform-defaultLang').textContent = payload.defaultLang;
+    const genreNumber = payload.user.userInfo.clientData.genre;
+    const countryNumber = payload.user.userInfo.shipmentData.country;
+    document.getElementById('platform-time').textContent = payload.time;
+    document.getElementById('user-name').textContent = payload.user.userInfo.clientData.name;
+    document.getElementById('user-surname').textContent = payload.user.userInfo.clientData.surname;
+    document.getElementById('user-gender').textContent = genreMap[genreNumber] || 'Desconocido';
+    document.getElementById('user-age').textContent = getAge(payload.user.userInfo.clientData.birthDate);
+    document.getElementById('user-email').textContent = payload.user.userInfo.clientData.email;
+    document.getElementById('user-address').textContent = [payload.user.userInfo.shipmentData.roadMainInfo, payload.user.userInfo.shipmentData.roadExtraInfo].filter(Boolean).join(" ");
+    document.getElementById('user-city').textContent = payload.user.userInfo.shipmentData.city;
+    document.getElementById('user-country').textContent = countryMap[countryNumber] || 'Desconocido';
 
-        if (!enviado) platformInfo = payload;
+
+    document.getElementById('platform-os').textContent = payload.platform.os;
+    document.getElementById('platform-arch').textContent = payload.platform.arch;
+    document.getElementById('platform-core').textContent = payload.platform.cpu;
+    document.getElementById('platform-ram').textContent = payload.platform.ram;
+    document.getElementById('platform-defaultLang').textContent = payload.platform.defaultLang;
+
+
+    document.getElementById('app-name').textContent = payload.app.name;
+    document.getElementById('app-chronium').textContent = payload.app.engine;
+    document.getElementById('app-node').textContent = payload.app.node;
+    document.getElementById('app-electron').textContent = payload.app.electron;
+    document.getElementById('app-screen').textContent = `${payload.app.windowSize.width} x ${payload.app.windowSize.height}`;
+    const applied = document.getElementById('default-adaptations');
+    const available = document.getElementById('available-adaptations');
+
+    applied.innerHTML = '';
+    available.innerHTML = '';
+
+    for (const key in availAdapt) {
+        const li = document.createElement('li');
+        li.textContent = `${key}: ${availAdapt[key]}`;
+        applied.appendChild(li);
     }
 
-    if (data.info.type === 'app-info') {
-        document.getElementById('platform-time').textContent = payload.time;
-        document.getElementById('app-name').textContent = payload.app;
-        document.getElementById('app-chronium').textContent = payload.engine;
-        document.getElementById('app-node').textContent = payload.node;
-        document.getElementById('app-electron').textContent = payload.electron;
-        document.getElementById('app-screen').textContent = `${payload.windowSize.width} x ${payload.windowSize.height}`;
-        const applied = document.getElementById('default-adaptations');
-        const available = document.getElementById('available-adaptations');
-
-        applied.innerHTML = '';
-        available.innerHTML = '';
-
-        for (const key in payload.mutations) {
-            const li = document.createElement('li');
-            li.textContent = `${key}: ${payload.mutations[key]}`;
-            applied.appendChild(li);
-        }
-
-        for (const key in payload.all_mutations) {
-            const li = document.createElement('li');
-            li.textContent = `${key}: ${payload.all_mutations[key].join(', ')}`;
-            available.appendChild(li);
-        }
-
-        if (!enviado) appInfo = payload;
+    for (const key in payload.app.available_adaptations) {
+        const li = document.createElement('li');
+        li.textContent = `${key}: ${payload.app.available_adaptations[key].join(', ')}`;
+        available.appendChild(li);
     }
 
-    if (data.info.type === 'user-info') {
-        const genreNumber = payload.user.genre;
-        const countryNumber = payload.user.country;
+    document.getElementById('navigation-sequence').textContent = JSON.stringify(recentNavigation, null, 2);
 
-        document.getElementById('platform-time').textContent = payload.time;
-        document.getElementById('user-name').textContent = payload.user.name;
-        document.getElementById('user-surname').textContent = payload.user.surname;
-        document.getElementById('user-gender').textContent = genreMap[genreNumber] || 'Desconocido';
-        document.getElementById('user-age').textContent = payload.user.age;
-        document.getElementById('user-email').textContent = payload.user.email;
-        document.getElementById('user-address').textContent = payload.user.address;
-        document.getElementById('user-city').textContent = payload.user.city;
-        document.getElementById('user-country').textContent = countryMap[countryNumber] || 'Desconocido';
-
-        if (!enviado) userInfo = payload.user;
-    }
-
-    if (data.info.type === 'window-resize') {
-        const w = payload.width;
-        const h = payload.height;
-        document.getElementById('app-screen').textContent = `${w} x ${h}`;
-    }
-    
-    sendContext();
 });
