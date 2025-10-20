@@ -1,0 +1,85 @@
+{
+  "usuario": {
+    "nombre": "Fernando",
+    "edad": 47,
+    "sexo": "Hombre",
+    "pais": "España"
+  },
+  "plataforma": {
+    "hora": "22:39:43",
+    "so": "Windows 10 Home",
+    "arquitectura": "64 bits (Intel/AMD)",
+    "nCPUs": 4,
+    "ram": "7.88",
+    "idiomaDefecto": "es"
+  },
+  "aplicacion": {
+    "nombre": "adaptiveapp",
+    "tipo": "catalogo de productos",
+    "vChromium": "122.0.6261.156",
+    "vNode": "v20.9.0",
+    "vElectron": "29.4.6",
+    "adapActual": {
+      "theme": "light",
+      "language": "es",
+      "display": "list",
+      "font_size": "small",
+      "information": "hide",
+      "category": "sports",
+      "menu_type": "dropdown",
+      "images": "no_images"
+    },
+    "adapDisponibles": {
+      "display": [
+        "list",
+        "grid2",
+        "grid3",
+        "grid4",
+        "grid5"
+      ],
+      "theme": [
+        "light",
+        "dark"
+      ],
+      "information": [
+        "show",
+        "partial",
+        "hide"
+      ],
+      "font_size": [
+        "small",
+        "default",
+        "medium",
+        "big"
+      ],
+      "menu_type": [
+        "line",
+        "dropdown"
+      ],
+      "images": [
+        "images",
+        "no_images"
+      ]
+    },
+    "ultimaSesion": [
+      {
+        "page": "catalog.html",
+        "duration": 7,
+        "clicks": 3,
+        "scroll": {
+          "up": 10,
+          "down": 33
+        }
+      },
+      {
+        "page": "product.html?articleId=converse_pro_blaze_v2",
+        "duration": 2,
+        "clicks": 2,
+        "scroll": {
+          "up": 0,
+          "down": 0
+        }
+      }
+    ]
+  }
+}

@@ -8,7 +8,7 @@ window.monitor.onUpdate((data) => {
     currentUuid = data.uuid; // Guardamos el uuid
 
     console.log('Datos recibidos en gestor:', data.info);
-    const payload = data.info.payload.app.available_adaptations;
+    const payload = data.info.app.available_adaptations;
 
     const container = document.getElementById('buttons-container');
     container.innerHTML = '';

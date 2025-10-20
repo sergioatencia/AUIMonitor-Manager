@@ -1,13 +1,13 @@
 const WebSocket = require('ws');
 const { v4: uuidv4 } = require('uuid');
 const Monitor = require('../centro');
+const { sendContext, sendKnwBase } = require('./agent');
 const fs = require('fs');
 const path = require('path');
 
 const url = process.env.URL;
 const port = process.env.PORT;
 const clients = new Map();
-let knowDoc;
 
 function runServer(mainWindow, secondWindow) {
   const wss = new WebSocket.Server({ port });
@@ -22,25 +22,43 @@ function runServer(mainWindow, secondWindow) {
 
     const monitor = new Monitor(ws.uuid);
 
-    setTimeout(() => {
-      // Solicitar datos de la última sesión
-      ws.send(JSON.stringify({ type: 'request-last-session' }));
-    }, 10000);
-
     ws.on('message', async (msg) => {
       try {
         const data = JSON.parse(msg);
-        if (data.type === 'last-session-data') {
-          const knowledge = handleLastSessionData(data.payload);
-          mainWindow.webContents.send('monitor-update', data);
-          await sendContext(knowledge, ws.uuid);
+        if (data.type === 'last-session') {
+          const filePath = path.join(__dirname, '../userssessions', data.filename);
+          if (fs.existsSync(filePath)) {
+            const lastContent = fs.readFileSync(filePath, 'utf8');
+            console.log('LEIDO DE FICHERO: ',lastContent);
+            await sendKnwBase(lastContent, ws.uuid);
+          } else {
+            const content = generateKnowledgeBase(data.payload);
+            fs.writeFileSync(filePath, content, 'utf-8');
+            await sendKnwBase(content, ws.uuid);
+          }
 
+        }
+        if (data.type === 'current-state') {
+          const context = generateContext(data.payload);
+          const adaptationPackages = await sendContext(context, ws.uuid);
+          // Si hay paquetes, reenviar al cliente
+          if (adaptationPackages && adaptationPackages.length > 0) {
+            adaptationPackages.forEach(pkg => {
+              console.log(`Paquete: ${pkg.packageName}`);
+              pkg.adaptations.forEach(adap => {
+                console.log(`  - Adaptación: ${adap.key}`);
+                console.log(`    Valor: ${adap.valor}`);
+                console.log(`    Motivo: ${adap.motivo}`);
+              });
+            });
+            // sendToClient(ws.uuid, { type: 'adaptation-packages', packages: adaptationPackages });
+          } else console.log('Sin sugerencias :(((');
         }
         monitor.setData(msg.toString());
         console.log("Datos almacenados en el monitor: ", monitor.getData());
 
         [mainWindow, secondWindow].forEach(win => {
-          if (win) win.webContents.send('monitor-update', { info: data, uuid: monitor.getIdClient() });
+          if (win) win.webContents.send('monitor-update', { info: data.payload, uuid: monitor.getIdClient() });
         });
       } catch (err) {
         console.error('[WS] Error procesando mensaje:', err.message);
@@ -66,77 +84,49 @@ function sendToClient(uuid, payload) {
   }
 }
 
-function handleLastSessionData(payload) {
-  try {
-    const appName = payload.app.name || 'desconocido';
-    const user = payload.user || {};
-    const nombre = user?.userInfo.clientData.name || 'anonimo';
-    const apellido = user?.userInfo.clientData.lastName || 'ns/nc';
-
-    const fileName = `${appName}-${nombre}_${apellido}.txt`;
-    const dir = path.join(__dirname, '../userssessions');
-    const filePath = path.join(dir, fileName);
-
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-
-    if (fs.existsSync(filePath)) {
-      console.log(`[WS] El archivo ${fileName} ya existe. Datos descartados.`);
-      const existingContent = fs.readFileSync(filePath, 'utf-8');
-      return existingContent;
-    }
-
-    const fileContent = generateKnowledgeBase(payload);
-    fs.writeFileSync(filePath, fileContent, 'utf-8');
-    console.log(`[WS] Archivo creado: ${fileName}`);
-    knowDoc = path.join(filePath);
-    return fileContent;
-  } catch (err) {
-    console.error('[WS] Error guardando datos de sesión:', err.message);
-  }
-}
 
 function generateKnowledgeBase(payload) {
-  const genreMap = {
-    1: 'Hombre',
-    2: 'Mujer',
-    3: 'Otro'
-  };
+  const genreMap = { 1: 'Hombre', 2: 'Mujer', 3: 'Otro' };
+  const countryMap = { 1: 'España', 2: 'Portugal', 3: 'Francia', 4: 'Inglaterra', 5: 'Bélgica' };
 
-  const countryMap = {
-    1: 'España',
-    2: 'Portugal',
-    3: 'Francia',
-    4: 'Inglaterra',
-    5: 'Bélgica'
-  }
+  const userInfo = payload.user || {};
+
 
   const userData = {
-    nombre: payload.user.userInfo.clientData.name,
-    edad: getAge(payload.user.userInfo.clientData.birthDate),
-    sexo: genreMap[payload.user.userInfo.clientData.genre] || 'Desconocido',
-    pais: countryMap[payload.user.userInfo.shipmentData.country] || 'Desconocido'
+    nombre: userInfo.name || 'anonimo',
+    edad: getAge(userInfo.birthDate) || 'desconocida',
+    sexo: genreMap[userInfo.genre] || 'Desconocido',
+    pais: countryMap[userInfo.country] || 'Desconocido'
   };
+
+  const appInfo = payload.app || {};
+
   const appData = {
-    nombre: payload.app.name,
+    nombre: appInfo.name || 'desconocido',
     tipo: "catalogo de productos",
-    vChromium: payload.app.engine,
-    vNode: payload.app.node,
-    vElectron: payload.app.electron,
-    adapActual: payload.app.mutations,
-    adapDisponibles: payload.appInfo.all_mutations,
-    ultimaSesion: payload.navigation
+    vChromium: appInfo.engine || 'desconocido',
+    vNode: appInfo.node || 'desconocido',
+    vElectron: appInfo.electron || 'desconocido',
+    adapActual: appInfo.applied_adaptations || [],
+    adapDisponibles: appInfo.available_adaptations || [],
+    ultimaSesion: appInfo.navigation || {}
   };
+
+  const platformInfo = payload.platform || {};
+
   const platformData = {
-    hora: payload.platform.time,
-    so: payload.platform.os,
-    arquitectura: payload.platform.arch,
-    nCPUs: payload.platform.cpu,
-    ram: payload.platform.ram,
-    idiomaDefecto: payload.platform.defaultLang
+    hora: platformInfo.time || '',
+    so: platformInfo.so || '',
+    arquitectura: platformInfo.arch || '',
+    nCPUs: platformInfo.cpu || 0,
+    ram: platformInfo.ram || 0,
+    idiomaDefecto: platformInfo.defaultLang || ''
   };
-  const knownledgeBase = { usuario: userData, plataforma: platformData, aplicacion: appData };
-  return JSON.stringify(knownledgeBase, null, 2);
+
+  const knowledgeBase = { usuario: userData, plataforma: platformData, aplicacion: appData };
+  return JSON.stringify(knowledgeBase, null, 2);
 }
+
 
 function getAge(birthDate) {
   birthDate = new Date(birthDate);
@@ -147,6 +137,16 @@ function getAge(birthDate) {
     age--;
   }
   return age;
+}
+
+function generateContext(payload){
+  const context = {
+    hora: payload.time,
+    tamano_ventana: payload.windowSize,
+    adpActual: payload.applied_adaptations,
+    navegacion: payload.navigation
+  }
+  return JSON.stringify(context, null, 2);
 }
 
 module.exports = { runServer, sendToClient };

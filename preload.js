@@ -16,22 +16,6 @@ contextBridge.exposeInMainWorld('monitor', {
     }
 });
 
-contextBridge.exposeInMainWorld('bubble', {
-  togglePopup: () => ipcRenderer.send('toggle-popup'),
-  dragBubble: (x, y) => ipcRenderer.send('drag-bubble', { x, y }),
-  saveMessage: (msg) => ipcRenderer.send('new-message', msg),
-  getChatHistory: () => ipcRenderer.invoke('get-chat-history'),
-  showBubbleMenu: () => ipcRenderer.send('show-bubble-menu'),
-
-  // Función para registrar callback de sugerencias
-  onSuggestionButtons: (callback) => {
-    ipcRenderer.on('show-suggestion-buttons', (_, data) => callback(data));
-  },
-  // Enviar adaptaciones seleccionadas al servidor
-  applySuggestions: (uuid, adaptations) => {
-    ipcRenderer.send('apply-suggestions', { uuid, adaptations });
-  }
-});
 
 
 
