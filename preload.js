@@ -1,20 +1,24 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('monitor', {
-    onUpdate: (callback) => {
-        ipcRenderer.on('monitor-update', (event, data) => callback(data));
-        // window.addEventListener('monitor-update', (event) => callback(event.detail));
-    },
-    sendMutation: (uuid, mutation, value) => {
-        console.log(`[Monitor] Enviando mutación ${mutation}=${value} al cliente ${uuid}.`);
-        ipcRenderer.send('send-mutation', { uuid, mutation, value });
-    },
-    generatePrompt: (text) => ipcRenderer.send('send-context', {text, uuid}),
-    sendKnowledge: (knowledge) => {
-        console.log('[Monitor] Enviando conocimiento inicial al main:', knowledge);
-        ipcRenderer.send('send-knowledge', knowledge);
-    }
+  onUpdate: (callback) => {
+    ipcRenderer.on('monitor-update', (event, data) => callback(data));
+    // window.addEventListener('monitor-update', (event) => callback(event.detail));
+  },
+  sendMutation: (uuid, mutation, value) => {
+    console.log(`[Monitor] Enviando mutación ${mutation}=${value} al cliente ${uuid}.`);
+    ipcRenderer.send('send-mutation', { uuid, mutation, value });
+  },
+  generatePrompt: (text) => ipcRenderer.send('send-context', { text, uuid }),
+  sendKnowledge: (knowledge) => {
+    console.log('[Monitor] Enviando conocimiento inicial al main:', knowledge);
+    ipcRenderer.send('send-knowledge', knowledge);
+  }
 });
+
+contextBridge.exposeInMainWorld('bubble', {
+  moveBubble: (dx, dy) => ipcRenderer.send('move-bubble', { dx, dy }),
+})
 
 
 
