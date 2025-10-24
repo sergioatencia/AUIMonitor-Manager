@@ -18,6 +18,7 @@ contextBridge.exposeInMainWorld('monitor', {
 
 contextBridge.exposeInMainWorld('bubble', {
   moveBubble: (dx, dy) => ipcRenderer.send('move-bubble', { dx, dy }),
+  togglePopup: () => ipcRenderer.send('toggle-popup'),
 })
 
 

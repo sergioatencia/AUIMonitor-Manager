@@ -1,13 +1,15 @@
 const { BrowserWindow, screen, ipcMain } = require('electron');
 const path = require('path');
 
+let popupWin = null;
+
 function createBubbleWindow(filePath) {
     const display = screen.getPrimaryDisplay();
     const { width, height } = display.workAreaSize;
 
     const buwin = new BrowserWindow({
-        width: 80,
-        height: 80,
+        width: 60,
+        height: 60,
         x: width - 100,
         y: height - 120,
         show: true,
@@ -47,10 +49,65 @@ function createBubbleWindow(filePath) {
         if (newY + winH > screenH) newY = screenH - winH;
 
         buwin.setPosition(newX, newY);
+
+        // Mover también el popup si está visible
+        if (popupWin && !popupWin.isDestroyed() && popupWin.isVisible()) {
+            positionPopup(buwin, popupWin);
+        }
     });
 
+    // --- IPC para mostrar / ocultar popup ---
+    ipcMain.on('toggle-popup', () => {
+        if (!popupWin || popupWin.isDestroyed()) {
+            popupWin = new BrowserWindow({
+                width: 300,
+                height: 400,
+                frame: false,
+                transparent: true,
+                alwaysOnTop: true,
+                resizable: false,
+                skipTaskbar: true,
+                autoHideMenuBar: true,
+                show: false,
+                parent: buwin,
+                webPreferences: {
+                    preload: path.join(__dirname, '../preload.js'),
+                },
+            });
+            popupWin.loadFile(path.join(__dirname, '../pages/popup.html'));
+        }
+
+        if (popupWin.isVisible()) {
+            popupWin.hide();
+        } else {
+            positionPopup(buwin, popupWin);
+            popupWin.show();
+        }
+    });
 
     return buwin;
+}
+
+// --- Posicionar popup junto a la burbuja ---
+function positionPopup(bubble, popup) {
+    const display = screen.getPrimaryDisplay();
+    const { width: screenW, height: screenH } = display.workAreaSize;
+
+    const [bx, by] = bubble.getPosition();
+    const [bw, bh] = bubble.getSize();
+    const [pw, ph] = popup.getSize();
+
+    let newX = bx + bw + 10; // popup a la derecha
+    let newY = by;
+
+    // Si se sale por la derecha, muévelo a la izquierda
+    if (newX + pw > screenW) newX = bx - pw - 10;
+    // Si se sale por abajo, súbelo
+    if (newY + ph > screenH) newY = screenH - ph - 10;
+    // No dejar que suba demasiado
+    if (newY < 0) newY = 0;
+
+    popup.setPosition(Math.round(newX), Math.round(newY));
 }
 
 module.exports = { createBubbleWindow };

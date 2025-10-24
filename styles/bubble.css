@@ -6,8 +6,8 @@ body {
 }
 
 #bubble {
-    width: 80px;
-    height: 80px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     background: linear-gradient(180deg, #0066c5, #094799);
     display: flex;
@@ -15,7 +15,7 @@ body {
     justify-content: center;
     box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3);
     user-select: none;
-    cursor: grab;
+    cursor: pointer;
     font-size: 34px;
     color: white;
 }

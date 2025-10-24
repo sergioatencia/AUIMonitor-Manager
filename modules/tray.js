@@ -14,6 +14,10 @@ function createTray(mainWindow, secondWindow) {
       click: () => {
         mainWindow.removeAllListeners('close');
         secondWindow.removeAllListeners('close');
+        if (tray) {
+          tray.destroy(); // 👈 Destruye el icono de bandeja antes de salir
+          tray = null;
+        }
         app.quit();
       }
     }
