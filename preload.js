@@ -19,6 +19,9 @@ contextBridge.exposeInMainWorld('monitor', {
 contextBridge.exposeInMainWorld('bubble', {
   moveBubble: (dx, dy) => ipcRenderer.send('move-bubble', { dx, dy }),
   togglePopup: () => ipcRenderer.send('toggle-popup'),
+  onAdaptationPackages: (callback) => { ipcRenderer.on('adaptation-packages', (_, data, uuid) => callback(data, uuid)); },
+  applyAdaptation: (uuid, pack) => ipcRenderer.send('apply-adaptation', { uuid, pack }),
+
 })
 
 

@@ -21,7 +21,7 @@ app.whenReady().then(() => {
   secondWindow = createWindow(path.join(__dirname, 'pages', 'gestor.html'));
 
   createTray(mainWindow, secondWindow);
-  runServer(mainWindow, secondWindow);
+  runServer(mainWindow, secondWindow, bubbleWindow);
   setupIpcHandlers();
   runAgent();
 });

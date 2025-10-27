@@ -2,6 +2,7 @@ const WebSocket = require('ws');
 const { v4: uuidv4 } = require('uuid');
 const Monitor = require('../centro');
 const { sendContext, sendKnwBase } = require('./agent');
+const { getPopupWindow } = require('./bubbleWindow');
 const fs = require('fs');
 const path = require('path');
 
@@ -9,7 +10,7 @@ const url = process.env.URL;
 const port = process.env.PORT;
 const clients = new Map();
 
-function runServer(mainWindow, secondWindow) {
+function runServer(mainWindow, secondWindow, bubbleWindow) {
   const wss = new WebSocket.Server({ port });
   console.log(`[WS] Servidor WebSocket activo en ws://${url}:${port}`);
 
@@ -29,7 +30,7 @@ function runServer(mainWindow, secondWindow) {
           const filePath = path.join(__dirname, '../userssessions', data.filename);
           if (fs.existsSync(filePath)) {
             const lastContent = fs.readFileSync(filePath, 'utf8');
-            console.log('LEIDO DE FICHERO: ',lastContent);
+            console.log('LEIDO DE FICHERO: ', lastContent);
             await sendKnwBase(lastContent, ws.uuid);
           } else {
             const content = generateKnowledgeBase(data.payload);
@@ -43,16 +44,39 @@ function runServer(mainWindow, secondWindow) {
           const adaptationPackages = await sendContext(context, ws.uuid);
           // Si hay paquetes, reenviar al cliente
           if (adaptationPackages && adaptationPackages.length > 0) {
-            adaptationPackages.forEach(pkg => {
-              console.log(`Paquete: ${pkg.packageName}`);
-              pkg.adaptations.forEach(adap => {
-                console.log(`  - Adaptación: ${adap.key}`);
-                console.log(`    Valor: ${adap.valor}`);
-                console.log(`    Motivo: ${adap.motivo}`);
-              });
-            });
-            // sendToClient(ws.uuid, { type: 'adaptation-packages', packages: adaptationPackages });
-          } else console.log('Sin sugerencias :(((');
+            // adaptationPackages.forEach(pkg => {
+            //   console.log(`Paquete: ${pkg.packageName}`);
+            //   pkg.adaptations.forEach(adap => {
+            //     console.log(`  - Adaptación: ${adap.key}`);
+            //     console.log(`    Valor: ${adap.valor}`);
+            //     console.log(`    Motivo: ${adap.motivo}`);
+            //   });
+            // });
+            // Enviar los paquetes al popup (burbuja)
+            const popupWindow = getPopupWindow();
+            if (popupWindow && !popupWindow.isDestroyed()) {
+              try {
+                popupWindow.webContents.send('adaptation-packages', adaptationPackages, ws.uuid);
+                console.log('[WS] Paquetes enviados al popup.');
+              } catch (err) {
+                console.error('[WS] Error enviando paquetes al popup:', err.message);
+              }
+            } else {
+              // fallback: enviar al bubble o a las otras ventanas si quieres
+              if (bubbleWindow && !bubbleWindow.isDestroyed()) {
+                try {
+                  bubbleWindow.webContents.send('adaptation-packages', adaptationPackages, ws.uuid);
+                  console.log('[WS] Paquetes enviados al bubble (fallback).');
+                } catch (err) {
+                  console.error('[WS] Error enviando paquetes al bubble:', err.message);
+                }
+              } else {
+                console.log('[WS] No hay popup ni bubble disponible para enviar paquetes.');
+              }
+            }
+          } else {
+            console.log('[WS] Sin sugerencias :(((');
+          }
         }
         monitor.setData(msg.toString());
         console.log("Datos almacenados en el monitor: ", monitor.getData());
@@ -139,7 +163,7 @@ function getAge(birthDate) {
   return age;
 }
 
-function generateContext(payload){
+function generateContext(payload) {
   const context = {
     hora: payload.time,
     tamano_ventana: payload.windowSize,

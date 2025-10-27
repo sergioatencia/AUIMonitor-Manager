@@ -60,8 +60,8 @@ function createBubbleWindow(filePath) {
     ipcMain.on('toggle-popup', () => {
         if (!popupWin || popupWin.isDestroyed()) {
             popupWin = new BrowserWindow({
-                width: 300,
-                height: 400,
+                width: 320,
+                height: 420,
                 frame: false,
                 transparent: true,
                 alwaysOnTop: true,
@@ -110,4 +110,8 @@ function positionPopup(bubble, popup) {
     popup.setPosition(Math.round(newX), Math.round(newY));
 }
 
-module.exports = { createBubbleWindow };
+function getPopupWindow() {
+    return popupWin;
+}
+
+module.exports = { createBubbleWindow, getPopupWindow };

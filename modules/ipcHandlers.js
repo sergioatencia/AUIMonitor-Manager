@@ -17,10 +17,8 @@ function setupIpcHandlers() {
     await sendContext(context, uuid);
   });
 
-  ipcMain.on('apply-suggestions', (_, { uuid, adaptations }) => {
-    adaptations.forEach(a => {
-      sendToClient(uuid, { type: 'mutate', adaptationKey: a.key, valor: a.valor });
-    });
+  ipcMain.on('apply-adaptation', (_, { uuid, pack }) => {
+    sendToClient(uuid, { type: 'apply-adaptation', pack });
   });
 }
 

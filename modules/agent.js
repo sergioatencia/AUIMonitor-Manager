@@ -22,10 +22,10 @@ async function sendKnwBase(knwb) {
   console.log("Respuesta base conocimiento: ", resp.text);
 }
 
-async function sendContext(context, uuid) {
+async function sendContext(context) {
   try {
     const resp = await chat.sendMessage({ message: context });
-    console.log(`[AGENT] Respuesta para ${uuid}: ${resp.text}`);
+    //console.log(`[AGENT] Respuesta para ${uuid}: ${resp.text}`);
     const respText = resp.text;
 
     const cleanedResp = respText.replace(/^```json\s*/, '').replace(/\s*```$/, '');

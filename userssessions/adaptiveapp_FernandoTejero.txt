@@ -1,7 +1,7 @@
 {
   "usuario": {
     "nombre": "Fernando",
-    "edad": 47,
+    "edad": 85,
     "sexo": "Hombre",
     "pais": "España"
   },
@@ -20,9 +20,9 @@
     "vNode": "v20.9.0",
     "vElectron": "29.4.6",
     "adapActual": {
-      "theme": "light",
+      "theme": "dark",
       "language": "es",
-      "display": "list",
+      "display": "grid5",
       "font_size": "small",
       "information": "hide",
       "category": "sports",

@@ -9,7 +9,7 @@ body {
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: linear-gradient(180deg, #0066c5, #094799);
+    background: steelblue;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -22,4 +22,13 @@ body {
 
 #bubble:active {
     cursor: grabbing;
+}
+
+#bubble-icon path {
+  fill: white;   /* color inicial */
+  transition: fill 0.3s;
+}
+
+#bubble-icon:hover path{
+  fill: springgreen;   /* color al pasar el mouse */
 }
