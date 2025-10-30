@@ -24,13 +24,24 @@ function createBubbleWindow(filePath) {
             preload: path.join(__dirname, '../preload.js'),
         },
     });
-
     buwin.loadFile(filePath);
 
-    //   buwin.on('close', (event) => {
-    //     event.preventDefault();
-    //     buwin.hide();
-    //   });
+    popupWin = new BrowserWindow({
+        width: 320,
+        height: 420,
+        frame: false,
+        transparent: true,
+        alwaysOnTop: true,
+        resizable: false,
+        skipTaskbar: true,
+        autoHideMenuBar: true,
+        show: false,
+        parent: buwin,
+        webPreferences: {
+            preload: path.join(__dirname, '../preload.js'),
+        },
+    });
+    popupWin.loadFile(path.join(__dirname, '../pages/popup.html'));
 
     ipcMain.on('move-bubble', (_, { dx, dy }) => {
         const display = screen.getPrimaryDisplay();
@@ -58,25 +69,6 @@ function createBubbleWindow(filePath) {
 
     // --- IPC para mostrar / ocultar popup ---
     ipcMain.on('toggle-popup', () => {
-        if (!popupWin || popupWin.isDestroyed()) {
-            popupWin = new BrowserWindow({
-                width: 320,
-                height: 420,
-                frame: false,
-                transparent: true,
-                alwaysOnTop: true,
-                resizable: false,
-                skipTaskbar: true,
-                autoHideMenuBar: true,
-                show: false,
-                parent: buwin,
-                webPreferences: {
-                    preload: path.join(__dirname, '../preload.js'),
-                },
-            });
-            popupWin.loadFile(path.join(__dirname, '../pages/popup.html'));
-        }
-
         if (popupWin.isVisible()) {
             popupWin.hide();
         } else {

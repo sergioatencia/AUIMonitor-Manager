@@ -1,78 +1,45 @@
+require('dotenv').config();
 const { GoogleGenAI } = require('@google/genai');
 
 const geminiApiKey = process.env.GEMINI_API_KEY;
+const genAI = new GoogleGenAI({ apiKey: geminiApiKey });
+
 //const agentAUIinstructions = require('../agentAUInstructions').initialInstructions;
 const agentAUIinstructions = "Eres un **Agente de Interfaz de Usuario Adaptativa (AUI)**. Sugiere adaptaciones para mejorar la UX. Recibes contexto inicial (usuario, aplicación, plataforma) en JSON, seguido de actualizaciones: `{'hora', 'tamano_ventana', 'adpActual': {<adaptacion>:<valor>,...}, 'navegacion': []}`. Debes sugerir, solo si es necesario, adaptaciones agrupadas en paquetes. Responde **SOLO** con un objeto JSON válido, **sin delimitadores de bloque de código** (```json o ```), que siga estrictamente este formato:`{'sugerencias':{'paquete_N':{<adaptacion>:{'valor':'<valor_sugerido>','motivo':'<motivo_breve>'},...},...}}`**IMPORTANTE:** Usa la clave **'valor'** para el valor de la adaptación y **'motivo'** para una explicación breve.";
 
-const genAI = new GoogleGenAI({ apiKey: geminiApiKey });
-
-let chat;
-
-async function runAgent() {
-  chat = genAI.chats.create({
-    model: 'gemini-2.0-flash',
-    config: { systemInstruction: agentAUIinstructions },
-  });
-  console.log('[AGENT] Agente Gemini inicializado.');
-}
-
-// Función para enviar contexto al agente
-async function sendKnwBase(knwb) {
-  const resp = await chat.sendMessage({ message: knwb });
-  console.log("Respuesta base conocimiento: ", resp.text);
-}
-
-async function sendContext(context) {
-  try {
-    const resp = await chat.sendMessage({ message: context });
-    //console.log(`[AGENT] Respuesta para ${uuid}: ${resp.text}`);
-    const respText = resp.text;
-
-    const cleanedResp = respText.replace(/^```json\s*/, '').replace(/\s*```$/, '');
-    const satinizedResp = JSON.parse(cleanedResp);
-    const adaptPacks = extractAdaptPack(satinizedResp);
-    return adaptPacks;
-  } catch (err) {
-    console.error('[sCtxt] Error al tratar las respuestas: ', err);
+class AUIAgent {
+  constructor() {
+    this.sysInstructions = agentAUIinstructions;
+    this.chat = null;
   }
-}
 
-// =======================================================
-// Extrae paquetes de adaptaciones de la respuesta del agente
-// =======================================================
-function extractAdaptPack(sanitizedResp) {
-  const sugerencias = sanitizedResp.sugerencias;
-  const packNames = Object.keys(sugerencias);
-  const packages = [];
+  async run() {
+    this.chat = genAI.chats.create({
+      model: 'gemini-2.0-flash',
+      config: { systemInstruction: this.sysInstructions },
+    });
+  }
+  // Envía conocimiento base
+  async sendKnwBase(knwb) {
+    if (!this.chat) throw new Error("Agente no inicializado. Ejecuta init() primero.");
+    const resp = await this.chat.sendMessage({ message: knwb });
+    console.log("[AGENT] Respuesta base conocimiento:", resp.text);
+  }
 
-  if (packNames.length > 0) {
-    for (const packName of packNames) {
-      const packContent = sugerencias[packName];
-      const adaptations = [];
+  // Envía contexto y recibe adaptaciones
+  async sendContext(context) {
+    if (!this.chat) throw new Error("Agente no inicializado. Ejecuta init() primero.");
+    try {
+      const resp = await this.chat.sendMessage({ message: context });
+      const respText = resp.text;
+      const cleanedResp = respText.replace(/^```json\s*/, '').replace(/\s*```$/, '');
 
-      for (const adaptKey in packContent) {
-        const suggestion = packContent[adaptKey];
-        const valor = suggestion.valor;
-        const motivo = suggestion.motivo;
-
-        console.log(`- Adaptación: ${adaptKey}`);
-        console.log(`  Valor sugerido: ${valor}`);
-        console.log(`  Motivo: ${motivo}`);
-
-        adaptations.push({ key: adaptKey, valor, motivo });
-      }
-
-      packages.push({ packageName: packName, adaptations });
+      return JSON.parse(cleanedResp);
+    } catch (err) {
+      console.error('[AGENT] Error al procesar la respuesta:', err);
+      return [];
     }
-
-    return packages;
-  } else {
-    console.log('Sin sugerencias');
-    return [];
   }
 }
 
-
-
-
-module.exports = { runAgent, sendContext, sendKnwBase };
+module.exports = AUIAgent;

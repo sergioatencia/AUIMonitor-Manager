@@ -1,0 +1,15 @@
+{
+    "monitor": {
+        "sampleInterval": 5000,
+        "paths": {
+            "log": "./logs",
+            "sessions": "./users_sessions"
+        } 
+    },
+    "adaptationManager": {
+        "mode": "sugerencia",
+        "bubble": {
+            "iconPath": "./images/icon.png"
+        }
+    }
+}

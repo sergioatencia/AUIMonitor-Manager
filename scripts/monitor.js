@@ -24,7 +24,8 @@ function getAge(birthDate) {
 }
 
 window.monitor.onUpdate((data) => {
-    const payload = data.info;
+    console.log("Datos recibidos al monitor: ", data);
+    const payload = data.info.payload;
     // --------- Navegación ---------
     const recentNavigation = payload.navigation || (payload.app && payload.app.navigation);
     if (recentNavigation) {

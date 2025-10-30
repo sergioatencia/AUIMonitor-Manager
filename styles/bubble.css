@@ -20,6 +20,10 @@ body {
     color: white;
 }
 
+#bubble:hover {
+  background: rgb(148, 57, 136);
+}
+
 #bubble:active {
     cursor: grabbing;
 }

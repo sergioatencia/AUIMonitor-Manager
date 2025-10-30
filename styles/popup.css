@@ -52,7 +52,7 @@ body {
 }
 
 .msg-bot {
-  background: #f0f0f0;
+  background: #6bb2ff;
   padding: 6px 10px;
   border-radius: 6px;
   align-self: flex-start;
@@ -60,8 +60,8 @@ body {
 }
 
 .msg-user {
-  background: #007bff;
-  color: white;
+  background: #ffae00;
+  color: black;
   padding: 6px 10px;
   border-radius: 6px;
   align-self: flex-end;
@@ -93,4 +93,13 @@ body {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+}
+.pkg-btn:disabled {
+  margin-top: 4px;
+  padding: 4px 8px;
+  background-color: #437950;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: not-allowed;
 }

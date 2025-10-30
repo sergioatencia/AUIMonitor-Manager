@@ -16,47 +16,64 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 
   // --- Función para mostrar paquetes de adaptación ---
-  function showPackages(packages) {
-    packages.forEach(pkg => {
-      const pkgDiv = document.createElement('div');
-      pkgDiv.className = 'pkg-item';
+  function showPackages(packages, modo) {
+    if (modo === "sugerencia") {
+      packages.forEach(pkg => {
+        const pkgDiv = document.createElement('div');
+        pkgDiv.className = 'msg-bot';
 
-      const title = document.createElement('h4');
-      title.textContent = `📦 ${pkg.packageName}`;
-      pkgDiv.appendChild(title);
+        const title = document.createElement('h4');
+        title.textContent = `📦 ${pkg.packageName}`;
+        pkgDiv.appendChild(title);
 
-      pkg.adaptations.forEach(a => {
-        const line = document.createElement('p');
-        line.innerHTML = `<b>${a.key}</b>: ${a.valor} <small>(${a.motivo})</small>`;
-        pkgDiv.appendChild(line);
+        pkg.adaptations.forEach(a => {
+          const line = document.createElement('p');
+          line.innerHTML = `<b>${a.key}</b>: ${a.valor} <small>(${a.motivo})</small>`;
+          pkgDiv.appendChild(line);
+        });
+
+        const btn = document.createElement('button');
+        btn.textContent = 'Aplicar';
+        btn.className = 'pkg-btn';
+        btn.onclick = () => {
+          if (currentUUID) {
+            window.bubble.applyAdaptation(currentUUID, pkg);
+            addMessage(`✅ Paquete "${pkg.packageName}" aplicado.`, 'bot');
+            btn.disabled = true;
+          } else {
+            addMessage('⚠️ No hay cliente seleccionado.', 'bot');
+          }
+        };
+        pkgDiv.appendChild(btn);
+
+        messagesDiv.appendChild(pkgDiv);
       });
-
-      const btn = document.createElement('button');
-      btn.textContent = 'Aplicar';
-      btn.className = 'pkg-btn';
-      btn.onclick = () => {
-        if (currentUUID) {
-          window.bubble.applyAdaptation(currentUUID, pkg);
-          addMessage(`✅ Paquete "${pkg.packageName}" aplicado.`, 'bot');
-        } else {
-          addMessage('⚠️ No hay cliente seleccionado.', 'bot');
-        }
+    }
+    else {
+      if (packages.length === 1) {
+        packages.forEach(pkg => {
+          if (currentUUID) {
+            let texto = `✅ Se aplicó el paquete ${pkg.packageName}:\n`;
+            pkg.adaptations.forEach(a => {
+              texto += `${a.key}: ${a.valor} (${a.motivo})\n`;
+            });
+            addMessage(texto, 'bot');
+            window.bubble.applyAdaptation(currentUUID, pkg);
+          }
+        });
       };
-      pkgDiv.appendChild(btn);
-
-      messagesDiv.appendChild(pkgDiv);
-    });
-
+    }
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
   }
 
   // --- Escuchar paquetes enviados desde el main ---
   if (window.bubble?.onAdaptationPackages) {
-    window.bubble.onAdaptationPackages((data, uuid) => {
+    window.bubble.onAdaptationPackages((data, uuid, modo) => {
       currentUUID = uuid;
       adaptationPackages = data;
-      addMessage('💡 Se recibieron nuevas sugerencias:');
-      showPackages(data);
+      console.log("Paquetes recibidos al popup: ", adaptationPackages);
+      if (modo === "sugerencia") addMessage('💡 Se recibieron nuevas sugerencias:');
+      showPackages(data, modo);
     });
   }
 
@@ -76,5 +93,5 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 
   // --- Mensaje inicial ---
-  addMessage('¡Hola! 😊 Soy mAUrI, tu agente de interfaces de usuario adaptativas. ¿En qué puedo ayudarte?', 'bot');
+  addMessage('Bienvenido! 😊 Soy mAUrI, tu agente de UI adaptativas.', 'bot');
 });
