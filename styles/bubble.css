@@ -6,14 +6,14 @@ body {
 }
 
 #bubble {
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     background: steelblue;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 18px #0000004d;
     user-select: none;
     cursor: pointer;
     font-size: 34px;
@@ -21,7 +21,7 @@ body {
 }
 
 #bubble:hover {
-  background: rgb(148, 57, 136);
+  background: #593994;
 }
 
 #bubble:active {
@@ -29,10 +29,6 @@ body {
 }
 
 #bubble-icon path {
-  fill: white;   /* color inicial */
+  fill: white; 
   transition: fill 0.3s;
-}
-
-#bubble-icon:hover path{
-  fill: springgreen;   /* color al pasar el mouse */
 }

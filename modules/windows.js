@@ -1,10 +1,10 @@
 const { BrowserWindow } = require('electron');
 const path = require('path');
 
-function createWindow(filePath) {
+function createWindow(filePath, width=1000, height=600) {
   const window = new BrowserWindow({
-    width: 1000,
-    height: 600,
+    width: width,
+    height: height,
     show: false,
     autoHideMenuBar: true,
     resizable: false,

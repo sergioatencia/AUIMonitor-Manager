@@ -4,7 +4,8 @@ let adaptationPackages = [];
 window.addEventListener('DOMContentLoaded', () => {
   const messagesDiv = document.getElementById('chat-messages');
   const form = document.getElementById('chat-form');
-  const input = document.getElementById('chat-input');
+  // const input = document.getElementById('chat-input');
+  const prmtButton = document.getElementById('prompt-button');
 
   // --- Función para añadir mensajes al chat ---
   function addMessage(text, sender = 'bot') {
@@ -38,7 +39,9 @@ window.addEventListener('DOMContentLoaded', () => {
         btn.onclick = () => {
           if (currentUUID) {
             window.bubble.applyAdaptation(currentUUID, pkg);
-            addMessage(`✅ Paquete "${pkg.packageName}" aplicado.`, 'bot');
+            setTimeout(() => {
+              addMessage(`✅ Paquete "${pkg.packageName}" aplicado.`, 'bot');
+            }, 1500);
             btn.disabled = true;
           } else {
             addMessage('⚠️ No hay cliente seleccionado.', 'bot');
@@ -57,7 +60,9 @@ window.addEventListener('DOMContentLoaded', () => {
             pkg.adaptations.forEach(a => {
               texto += `${a.key}: ${a.valor} (${a.motivo})\n`;
             });
-            addMessage(texto, 'bot');
+            setTimeout(() => {
+              addMessage(texto, 'bot');
+            }, 1500);
             window.bubble.applyAdaptation(currentUUID, pkg);
           }
         });
@@ -72,26 +77,57 @@ window.addEventListener('DOMContentLoaded', () => {
       currentUUID = uuid;
       adaptationPackages = data;
       console.log("Paquetes recibidos al popup: ", adaptationPackages);
-      if (modo === "sugerencia") addMessage('💡 Se recibieron nuevas sugerencias:');
+      if (modo === "sugerencia") {
+        addMessage('💡 Se recibieron nuevas sugerencias:');
+        prmtButton.style.visibility = "visible";
+        prmtButton.disabled = false;
+      }
+      else prmtButton.style.visibility = "hidden";
       showPackages(data, modo);
     });
   }
 
-  // --- Enviar mensajes del usuario ---
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const text = input.value.trim();
-    if (!text) return;
+  prmtButton.addEventListener('click', () => {
+    const text = "Sugiéreme un nuevo paquete de adaptaciones con el contexto actual";
+    window.bubble.askAdaptation(text, currentUUID);
 
-    addMessage(text, 'user');
-    input.value = '';
+    // const text = input.value.trim();
+    // if (!text) return;
+
+    // addMessage(text, 'user');
+    // input.value = '';
 
     // Simula respuesta del bot
-    setTimeout(() => {
-      addMessage(`Entendido: "${text}"`, 'bot');
-    }, 600);
+    // setTimeout(() => {
+    //   addMessage(`Entendido: "${text}"`, 'bot');
+    // }, 600);
   });
 
   // --- Mensaje inicial ---
   addMessage('Bienvenido! 😊 Soy mAUrI, tu agente de UI adaptativas.', 'bot');
+});
+
+// Limpieza del popup cuando el cliente se desconecta
+window.bubble.onClearContent(() => {
+  console.log(`[${new Date().toLocaleTimeString()}] Clearing popup UI (client disconnected).`);
+
+  currentUUID = null;
+  adaptationPackages = [];
+
+  const messagesDiv = document.getElementById('chat-messages');
+  if (messagesDiv) messagesDiv.innerHTML = '';
+
+  const prmtButton = document.getElementById('prompt-button');
+  if (prmtButton) {
+    prmtButton.disabled = true;
+    prmtButton.style.visibility = 'hidden';
+  }
+
+  setTimeout(() => {
+    const msg = document.createElement('div');
+    msg.className = 'msg-bot';
+    msg.textContent = 'Bienvenido! 😊 Soy mAUrI, tu agente de UI adaptativas.';
+    messagesDiv.appendChild(msg);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  }, 3000);
 });

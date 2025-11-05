@@ -10,6 +10,7 @@ contextBridge.exposeInMainWorld('monitor', {
     ipcRenderer.send('send-mutation', { uuid, mutation, value });
   },
   generatePrompt: (text) => ipcRenderer.send('send-context', { text, uuid }),
+  onClearContent: (callback) => ipcRenderer.on('clear-content', callback),
 });
 
 contextBridge.exposeInMainWorld('bubble', {
@@ -17,8 +18,17 @@ contextBridge.exposeInMainWorld('bubble', {
   togglePopup: () => ipcRenderer.send('toggle-popup'),
   onAdaptationPackages: (callback) => { ipcRenderer.on('adaptation-packages', (_, data, uuid, currentMode) => callback(data, uuid, currentMode)); },
   applyAdaptation: (uuid, pack) => ipcRenderer.send('apply-adaptation', { uuid, pack }),
+  askAdaptation: (text, uuid) => ipcRenderer.send('ask-adaptation', { text, uuid }),
+  onClearContent: (callback) => ipcRenderer.on('clear-bubble-content', callback),
 });
 
 contextBridge.exposeInMainWorld('electronAPI', {
+  // 1. Obtener la configuración actual (usado en DOMContentLoaded)
+  getConfig: () => ipcRenderer.invoke('get-config'),
+
+  // 2. Actualizar/Guardar configuración (usado por saveSettings)
+  updateConfig: (newConfigSection) => ipcRenderer.invoke('update-config', newConfigSection),
+
+  // 3. Abrir diálogo de carpeta (usado por selectFolder)
   selectDirectory: () => ipcRenderer.invoke('select-directory')
 })

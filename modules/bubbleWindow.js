@@ -8,17 +8,17 @@ function createBubbleWindow(filePath) {
     const { width, height } = display.workAreaSize;
 
     const buwin = new BrowserWindow({
-        width: 60,
-        height: 60,
-        x: width - 100,
-        y: height - 120,
+        width: 50,
+        height: 50,
+        x: width - 60,
+        y: height / 2,
         show: true,
         alwaysOnTop: true,
         autoHideMenuBar: true,
         frame: false,
         resizable: false,
         transparent: true,
-        hasShadow: false,
+        hasShadow: true,
         skipTaskbar: true,
         webPreferences: {
             preload: path.join(__dirname, '../preload.js'),

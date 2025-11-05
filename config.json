@@ -1,15 +1,12 @@
 {
-    "monitor": {
-        "sampleInterval": 5000,
-        "paths": {
-            "log": "./logs",
-            "sessions": "./users_sessions"
-        } 
-    },
-    "adaptationManager": {
-        "mode": "sugerencia",
-        "bubble": {
-            "iconPath": "./images/icon.png"
-        }
+  "monitor": {
+    "sampleInterval": "60",
+    "sessionPath": "./users_sessions",
+    "agente": {
+      "model": "gemini-2.0-flash-lite"
     }
+  },
+  "gestor": {
+    "mode": "automatico"
+  }
 }

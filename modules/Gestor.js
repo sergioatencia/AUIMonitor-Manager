@@ -1,9 +1,7 @@
-const path = require('path');
-
 class Gestor {
-    constructor(idCliente = null) {
+    constructor(idCliente = null, gestorConfig = {}) {
         this.idCliente = idCliente;
-        this.mode = "automatico";
+        this.mode = gestorConfig.mode || "automatico";
         this.adaptaciones = null;
     }
     getIdCliente(){
@@ -12,7 +10,6 @@ class Gestor {
     destroy() {
         this.idCliente = null;
         this.mode = null;        
-        this.bubble = null;
         this.adaptaciones = null;
     }
 
@@ -30,14 +27,14 @@ class Gestor {
                     const suggestion = packContent[adaptKey];
                     const valor = suggestion.valor;
                     const motivo = suggestion.motivo;
-                    console.log(`[Cliente ${this.idCliente}]\n\tAdaptación: ${adaptKey}\n\tValor sugerido: ${valor}\n\tMotivo: ${motivo}`);
+                    // console.log(`[Cliente ${this.idCliente}]\n\tAdaptación: ${adaptKey}\n\tValor sugerido: ${valor}\n\tMotivo: ${motivo}`);
                     adaptations.push({ key: adaptKey, valor, motivo });
                 }
 
                 packages.push({ packageName: packName, adaptations });
             }
         } else {
-            console.log(`[AGENT ${this.idCliente}] Sin sugerencias`);
+            console.log(`[${new Date().toLocaleTimeString()}] No suggestions to client ${this.idCliente}.`);
         }
 
         return packages;

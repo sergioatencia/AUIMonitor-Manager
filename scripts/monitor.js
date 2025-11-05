@@ -1,87 +1,99 @@
-const genreMap = {
-    1: 'Hombre',
-    2: 'Mujer',
-    3: 'Otro'
-};
-
-const countryMap = {
-    1: 'España',
-    2: 'Portugal',
-    3: 'Francia',
-    4: 'Inglaterra',
-    5: 'Bélgica'
-}
-
-function getAge(birthDate) {
-    birthDate = new Date(birthDate);
-    const today = new Date();
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const m = today.getMonth() - birthDate.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-        age--;
-    }
-    return age;
-}
+let lastPayload = {};
 
 window.monitor.onUpdate((data) => {
-    console.log("Datos recibidos al monitor: ", data);
+    console.log(`[${new Date().toLocaleTimeString()}] Received data in monitor: ${data}.`);
     const payload = data.info.payload;
-    // --------- Navegación ---------
-    const recentNavigation = payload.navigation || (payload.app && payload.app.navigation);
-    if (recentNavigation) {
-        document.getElementById('navigation-sequence').textContent = JSON.stringify(recentNavigation, null, 2);
-    }
-    // --------- Adaptaciones ---------
-    const availAdapt = payload.applied_adaptations || (payload.app && payload.app.applied_adaptations);
-    const applied = document.getElementById('default-adaptations');
-    const available = document.getElementById('available-adaptations');
-    applied.innerHTML = '';
-    available.innerHTML = '';
 
-    if (availAdapt) {
-        for (const key in availAdapt) {
-            const li = document.createElement('li');
-            li.textContent = `${key}: ${availAdapt[key]}`;
-            applied.appendChild(li);
+    lastPayload = {
+        ...lastPayload,
+        ...payload,
+        user: { ...lastPayload.user, ...payload.user },
+        environment: { ...lastPayload.environment, ...payload.environment },
+        platform: { ...lastPayload.platform, ...payload.platform },
+        app: { ...lastPayload.app, ...payload.app }
+    };
+
+    const full = lastPayload;
+
+    if (full.user) {
+        document.getElementById('user-name').textContent = full.user.name ?? '';
+        document.getElementById('user-surname').textContent = full.user.lastName ?? '';
+        document.getElementById('user-genre').textContent = full.user.genre ?? '';
+        document.getElementById('user-age').textContent = full.user.age ?? '';
+        document.getElementById('user-city').textContent = full.user.city ?? '';
+        document.getElementById('user-country').textContent = full.user.country ?? '';
+    }
+
+    // --- Sección: Entorno ---
+    if (full.environment) {
+        document.getElementById('environment-timeZone').textContent = full.environment.timeZone ?? '';
+        document.getElementById('environment-countryCode').textContent = full.environment.countryCode ?? '';
+        document.getElementById('environment-date').textContent = full.environment.date ?? '';
+        document.getElementById('environment-day').textContent = full.environment.day ?? '';
+        document.getElementById('environment-time').textContent = full.environment.time ?? '';
+    }
+
+    if (full.platform) {
+        document.getElementById('platform-os').textContent = full.platform.os ?? '';
+        document.getElementById('platform-arch').textContent = full.platform.arch ?? '';
+        document.getElementById('platform-numCPU').textContent = full.platform.numCPUs ?? '';
+        document.getElementById('platform-totalRAM').textContent = full.platform.ramSizeGB ? `${full.platform.ramSizeGB} GB` : '';
+        document.getElementById('platform-defaultLang').textContent = full.platform.defaultLang ?? '';
+    }
+
+    if (full.app) {
+        document.getElementById('app-name').textContent = full.app.name ?? '';
+        document.getElementById('app-type').textContent = full.app.type ?? '';
+        if (full.app.windowSize) {
+            document.getElementById('app-screen').textContent = `${full.app.windowSize.width} x ${full.app.windowSize.height}`;
+        }
+        document.getElementById('app-cpuUsage').textContent = full.app.cpuUsagePercent ? `${full.app.cpuUsagePercent} %` : '';
+        document.getElementById('app-ramUsage').textContent = full.app.ramUsageMB ? `${full.app.ramUsageMB} MB` : '';
+        if (full.app.navigation) {
+            document.getElementById('navigation-sequence').textContent = JSON.stringify(full.app.navigation, null, 2);
+        }
+
+        const current = document.getElementById('current-adaptations');
+        const available = document.getElementById('available-adaptations');
+
+        if (full.app.currentAdaptations) {
+            current.innerHTML = '';
+            for (const key in full.app.currentAdaptations) {
+                const li = document.createElement('li');
+                li.textContent = `${key}: ${full.app.currentAdaptations[key]}`;
+                current.appendChild(li);
+            }
+        }
+
+        if (full.app.availableAdaptations) {
+            available.innerHTML = '';
+            for (const key in full.app.availableAdaptations) {
+                const li = document.createElement('li');
+                li.textContent = `${key}: ${full.app.availableAdaptations[key].join(', ')}`;
+                available.appendChild(li);
+            }
         }
     }
+});
 
-    if (payload.app && payload.app.available_adaptations) {
-        for (const key in payload.app.available_adaptations) {
-            const li = document.createElement('li');
-            li.textContent = `${key}: ${payload.app.available_adaptations[key].join(', ')}`;
-            available.appendChild(li);
-        }
-    }
+window.monitor.onClearContent(() => {
+    console.log(`[${new Date().toLocaleTimeString()}] Clearing monitor UI (client disconnected).`);
+    lastPayload = {};
+    const textFields = [
+        'user-name', 'user-surname', 'user-genre', 'user-age', 'user-city', 'user-country',
+        'environment-timeZone', 'environment-countryCode', 'environment-date',
+        'environment-day', 'environment-time',
+        'platform-os', 'platform-arch', 'platform-numCPU', 'platform-totalRAM', 'platform-defaultLang',
+        'app-name', 'app-type', 'app-screen', 'app-cpuUsage', 'app-ramUsage', 'navigation-sequence'
+    ];
 
-    // --------- Usuario y plataforma ---------
-    if (payload.user) {
-        const genreNumber = payload.user.genre;
-        const countryNumber = payload.user.country;
+    textFields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = '';
+    });
 
-        document.getElementById('platform-time').textContent = payload.time || payload.platform.time;
-        document.getElementById('user-name').textContent = payload.user.name;
-        document.getElementById('user-surname').textContent = payload.user.lastName;
-        document.getElementById('user-gender').textContent = genreMap[genreNumber] || 'Desconocido';
-        document.getElementById('user-age').textContent = getAge(payload.user.birthDate);
-        document.getElementById('user-email').textContent = payload.user.email;
-        document.getElementById('user-address').textContent = [payload.user.roadMainInfo, payload.user.roadExtraInfo].filter(Boolean).join(" ");
-        document.getElementById('user-city').textContent = payload.user.city;
-        document.getElementById('user-country').textContent = countryMap[countryNumber] || 'Desconocido';
-
-        document.getElementById('platform-os').textContent = payload.platform.os;
-        document.getElementById('platform-arch').textContent = payload.platform.arch;
-        document.getElementById('platform-core').textContent = payload.platform.cpu;
-        document.getElementById('platform-ram').textContent = payload.platform.ram;
-        document.getElementById('platform-defaultLang').textContent = payload.platform.defaultLang;
-
-        document.getElementById('app-name').textContent = payload.app.name;
-        document.getElementById('app-chronium').textContent = payload.app.engine;
-        document.getElementById('app-node').textContent = payload.app.node;
-        document.getElementById('app-electron').textContent = payload.app.electron;
-        document.getElementById('app-screen').textContent = `${payload.app.windowSize.width} x ${payload.app.windowSize.height}`;
-    } else {
-        // Si solo es recent-context, puedes limpiar o mostrar placeholders
-        document.getElementById('platform-time').textContent = payload.time;
-    }
+    ['current-adaptations', 'available-adaptations'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = '';
+    });
 });

@@ -4,24 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monitor 🔧</title>
+    <title>Monitor-Dashboard</title>
     <link rel="stylesheet" href="../styles/monitor.css">
 </head>
 
 <body>
     <div class="page-container">
-        <aside class="sidebar">
-            <header>
-                <h1>Monitor</h1>
-            </header>
+        <!-- <aside class="sidebar">            
             <nav>
                 <ul>
                     <li><a href="#info" class="active">Información general</a></li>
-                    <li><a href="#confi">Configuración</a></li>
                     <li><a href="#about">Acerca de</a></li>
                 </ul>
             </nav>
-        </aside>
+        </aside> -->
 
         <!-- Contenido principal -->
         <main class="main-content">
@@ -31,58 +27,59 @@
                     <div class="form-group">
                         <p><strong>Nombre:</strong> <span id="user-name"></span></p>
                         <p><strong>Apellidos:</strong> <span id="user-surname"></span></p>
-                        <p><strong>Sexo:</strong> <span id="user-gender"></span></p>
+                        <p><strong>Sexo:</strong> <span id="user-genre"></span></p>
                         <p><strong>Edad:</strong> <span id="user-age"></span></p>
-                        <p><strong>Email:</strong> <span id="user-email"></span></p>
-                        <p><strong>Dirección:</strong> <span id="user-address"></span></p>
                         <p><strong>Ciudad:</strong> <span id="user-city"></span></p>
                         <p><strong>País:</strong> <span id="user-country"></span></p>
                     </div>
                 </form>
             </section>
-            <!-- Sección Contexto de la plataforma -->
             <section id="info2">
-                <h1>Contexto de la plataforma</h1>
-                <form id="config-form">
+                <h1>Contexto del entorno</h1>
+                <form>
                     <div class="form-group">
-                        <p><strong>Hora:</strong> <span id="platform-time"></span></p>
-                        <p><strong>SO:</strong> <span id="platform-os"></span></p>
-                        <p><strong>Arquitectura:</strong> <span id="platform-arch"></span></p>
-                        <p><strong>Nº de núcleos:</strong> <span id="platform-core"></span></p>
-                        <p><strong>RAM:</strong> <span id="platform-ram"></span> GB</p>
-                        <p><strong>Idioma por defecto:</strong> <span id="platform-defaultLang"></span></p>
+                        <p><strong>Zona horaria:</strong> <span id="environment-timeZone"></span></p>
+                        <p><strong>Código de país:</strong> <span id="environment-countryCode"></span></p>
+                        <p><strong>Fecha:</strong> <span id="environment-date"></span></p>
+                        <p><strong>Día de la semana:</strong> <span id="environment-day"></span></p>
+                        <p><strong>Hora:</strong> <span id="environment-time"></span> </p>
                     </div>
                 </form>
             </section>
             <section id="info3">
+                <h1>Contexto de la plataforma</h1>
+                <form>
+                    <div class="form-group">
+                        <p><strong>SO:</strong> <span id="platform-os"></span></p>
+                        <p><strong>Arquitectura:</strong> <span id="platform-arch"></span></p>
+                        <p><strong>Nº de núcleos CPU:</strong> <span id="platform-numCPU"></span></p>
+                        <p><strong>RAM total:</strong> <span id="platform-totalRAM"></span></p>
+                        <p><strong>Idioma por defecto:</strong> <span id="platform-defaultLang"></span></p>
+                    </div>
+                </form>
+            </section>
+            <section id="info4">
                 <h1>Contexto de la aplicación</h1>
                 <form>
                     <div class="form-group">
                         <p><strong>Nombre:</strong> <span id="app-name"></span></p>
-                        <p><strong>Chronium:</strong> <span id="app-chronium"></span></p>
-                        <p><strong>Versión de Node:</strong> <span id="app-node"></span></p>
-                        <p><strong>Versión de Electron:</strong> <span id="app-electron"></span></p>
+                        <p><strong>Tipo:</strong> <span id="app-type"></span></p>
                         <p><strong>Tamaño de la ventana:</strong> <span id="app-screen"></span></p>
+                        <p><strong>Uso de CPU:</strong> <span id="app-cpuUsage"></span></p>
+                        <p><strong>Uso de RAM:</strong> <span id="app-ramUsage"></span></p>
                         <div id="adaptative-info">
-                            <h3>Adaptación aplicada:</h3>
-                            <ul id="default-adaptations"></ul>
+                            <h3>Adaptaciones actuales:</h3>
+                            <ul id="current-adaptations"></ul>
                             <br>
                             <h3>Adaptaciones disponibles:</h3>
                             <ul id="available-adaptations"></ul>
                         </div>
                         <div id="navigation-info">
                             <h3>Secuencia de navegación:</h3>
-                            <textarea id="navigation-sequence" style="background-color: #3a3a55; resize: none; border-radius: 10px; border-color: transparent;" rows="10" readonly></textarea>
+                            <textarea id="navigation-sequence" rows="10" readonly></textarea>
                         </div>
                     </div>
                 </form>
-            </section>
-
-
-            <!-- Sección Acerca de -->
-            <section id="about">
-                <h2>Acerca de</h2>
-                <p>Información de la aplicación, versión y créditos.</p>
             </section>
         </main>
     </div>

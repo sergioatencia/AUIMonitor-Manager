@@ -9,7 +9,7 @@ body {
   flex-direction: column;
   height: 100%;
   width: 100%;
-  overflow: hidden;
+  background: cornsilk;
 }
 
 #chat-messages {
@@ -23,9 +23,13 @@ body {
 
 #chat-form {
   display: flex;
-  gap: 8px; /* separa input y botón */
+  gap: 8px;
   padding: 8px;
   box-sizing: border-box;
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 #chat-input {
@@ -47,8 +51,13 @@ body {
   border-radius: 4px;
 }
 
-#chat-form button:hover{
+#chat-form button:hover {
   background-color: #45a049;
+}
+
+#chat-form button:disabled {
+  background-color: #1b3f1d;
+  cursor: not-allowed;
 }
 
 .msg-bot {
@@ -94,6 +103,7 @@ body {
   border-radius: 4px;
   cursor: pointer;
 }
+
 .pkg-btn:disabled {
   margin-top: 4px;
   padding: 4px 8px;
@@ -101,5 +111,36 @@ body {
   color: white;
   border: none;
   border-radius: 4px;
+  cursor: not-allowed;
+}
+
+#chat-commands {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  background: cornsilk;
+  border-top: 1px solid #ccc;
+}
+
+#chat-commands button {
+  padding: 6px 12px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#chat-commands button:hover {
+  background-color: #45a049;
+}
+
+#chat-commands button:disabled {
+  background-color: #1b3f1d;
   cursor: not-allowed;
 }
