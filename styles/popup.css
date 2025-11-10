@@ -1,7 +1,6 @@
 body {
   margin: 0;
-  font-family: sans-serif;
-  background: cornsilk;
+  font-family: Arial, Helvetica, sans-serif
 }
 
 #chat-container {
@@ -9,7 +8,9 @@ body {
   flex-direction: column;
   height: 100%;
   width: 100%;
-  background: cornsilk;
+background: radial-gradient(circle,rgba(226, 255, 179, 1) 0%, rgba(184, 217, 255, 1) 59%);
+  font-size: 13px;
+  border-radius: 10px;
 }
 
 #chat-messages {
@@ -61,7 +62,7 @@ body {
 }
 
 .msg-bot {
-  background: #6bb2ff;
+  background: #4a66ff;
   padding: 6px 10px;
   border-radius: 6px;
   align-self: flex-start;
@@ -69,7 +70,7 @@ body {
 }
 
 .msg-user {
-  background: #ffae00;
+  background: #fdc241;
   color: black;
   padding: 6px 10px;
   border-radius: 6px;
@@ -97,7 +98,7 @@ body {
 .pkg-btn {
   margin-top: 4px;
   padding: 4px 8px;
-  background-color: #28a745;
+  background-color: #1ab43e;
   color: white;
   border: none;
   border-radius: 4px;
@@ -107,7 +108,7 @@ body {
 .pkg-btn:disabled {
   margin-top: 4px;
   padding: 4px 8px;
-  background-color: #437950;
+  background-color: #2d5f39;
   color: white;
   border: none;
   border-radius: 4px;
@@ -121,8 +122,6 @@ body {
   justify-content: center;
   align-items: center;
   padding: 10px;
-  background: cornsilk;
-  border-top: 1px solid #ccc;
 }
 
 #chat-commands button {

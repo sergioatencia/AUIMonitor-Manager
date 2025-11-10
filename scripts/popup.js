@@ -104,7 +104,7 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 
   // --- Mensaje inicial ---
-  addMessage('Bienvenido! 😊 Soy mAUrI, tu agente de UI adaptativas.', 'bot');
+  addMessage('Bienvenido! 😊 Soy mAUrI, tu agente de IU adaptativas.', 'bot');
 });
 
 // Limpieza del popup cuando el cliente se desconecta
@@ -126,7 +126,7 @@ window.bubble.onClearContent(() => {
   setTimeout(() => {
     const msg = document.createElement('div');
     msg.className = 'msg-bot';
-    msg.textContent = 'Bienvenido! 😊 Soy mAUrI, tu agente de UI adaptativas.';
+    msg.textContent = 'Bienvenido! 😊 Soy mAUrI, tu agente de IU adaptativas.';
     messagesDiv.appendChild(msg);
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
   }, 3000);

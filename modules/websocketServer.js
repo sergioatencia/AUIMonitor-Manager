@@ -53,7 +53,6 @@ function runServer(mainWindow, secondWindow, config) {
           await monitor.launchAgent();
           interval = setInterval(() => {
             if (ws.readyState === WebSocket.OPEN) {
-              //console.log(`[Server] Solicitando datos actuales periódicos a cliente ${ws.uuid}.`);
               ws.send(JSON.stringify({ type: 'current-state' }));
             }
           }, config.monitor.sampleInterval * 1000);
@@ -61,9 +60,8 @@ function runServer(mainWindow, secondWindow, config) {
         }
 
         if (data.type === 'current-state') {
-          const context = monitor.generateContext(data.payload);
-          //console.log('Contexto actualizado recibido: ', context);
-          await processCurrentStatus(context, monitor, gestor);
+          const navigation = monitor.getNavigationData(data.payload);
+          await processCurrentStatus(navigation, data.payload, monitor, gestor);
         }
         monitor.setData(data);
         [mainWindow, secondWindow].forEach(win => {
@@ -71,7 +69,7 @@ function runServer(mainWindow, secondWindow, config) {
         });
 
       } catch (err) {
-        console.error(`[${new Date().toLocaleTimeString()}] Error processing the message on the server: ${err.message}.`);
+        console.error(`[${new Date().toLocaleTimeString()}] Error processing the message on the server: ${err}.`);
       }
     });
 
@@ -112,8 +110,10 @@ function sendToClient(uuid, payload) {
   }
 }
 
-async function processCurrentStatus(data, monitor, gestor) {
-  const resp = await monitor.agent.sendContext(data);
+async function processCurrentStatus(navigation, data, monitor, gestor) {
+  const analysisUX = await monitor.analyzerAgent.analyzeContext(navigation);
+  const context = monitor.mergeAnalysisContext(analysisUX, data);
+  const resp = await monitor.plannerAgent.planAdapts(context);
   const adaptationPackages = gestor.extractAdaptPack(resp);
 
   if (adaptationPackages && adaptationPackages.length > 0) {
@@ -121,7 +121,6 @@ async function processCurrentStatus(data, monitor, gestor) {
     if (popupWindow && !popupWindow.isDestroyed()) {
       try {
         popupWindow.webContents.send('adaptation-packages', adaptationPackages, gestor.getIdCliente(), gestor.mode);
-        //console.log('[WS] Paquetes enviados al popup.');
       } catch (err) {
         console.error(`[${new Date().toLocaleTimeString()}] Error sending adaptations packages to popup: ${err.message}.`);
       }
@@ -169,11 +168,12 @@ async function applyNewConfig(newConfig) {
   }
 
   for (const [uuid, monitor] of monitores.entries()) {
-    const currentModel = monitor.agent.modelo;
+    const currentModel = monitor.analyzerAgent.modelo;
     const newModel = newConfig.monitor?.agente?.modelo;
     if (newModel && currentModel !== newModel) {
       console.log(`[${new Date().toLocaleTimeString()}] Changing LLM model for monitor ${uuid} → ${newModel}`);
-      await monitor.agent.changeModel(newModel);
+      await monitor.analyzerAgent.changeModel(newModel);
+      await monitor.plannerAgent.changeModel(newModel);
     }
   }
 }

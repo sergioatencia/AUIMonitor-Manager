@@ -3,10 +3,10 @@
     "sampleInterval": "60",
     "sessionPath": "./users_sessions",
     "agente": {
-      "model": "gemini-2.0-flash-lite"
+      "model": "gemini-2.0-flash"
     }
   },
   "gestor": {
-    "mode": "automatico"
+    "mode": "sugerencia"
   }
 }

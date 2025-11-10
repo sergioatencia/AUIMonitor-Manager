@@ -4,7 +4,9 @@ class Monitor {
     constructor(idclient = null, monitorConfig = {}) {
         this.idclient = idclient;
         this.data = null;
-        this.agent = new AUIAgent(monitorConfig.agente.model);
+        this.navigation = null;
+        this.analyzerAgent = new AUIAgent(monitorConfig.agente.model, "analyzer-data");
+        this.plannerAgent = new AUIAgent(monitorConfig.agente.model, "planner-adaptation");
         this.knwb = null;
     }
     getIdClient() {
@@ -16,18 +18,21 @@ class Monitor {
     setData(data) {
         this.data = data;
     }
-    setKnwBase(knwb){
+    setKnwBase(knwb) {
         this.knwb = knwb;
     }
 
     async launchAgent() {
-        await this.agent.run(this.knwb);
+        await this.analyzerAgent.run();
+        await this.plannerAgent.run(this.knwb);
     }
     destroy() {
         this.idclient = null;
         this.data = null;
-        this.agent.destroy();
-        this.agent = null;
+        this.analyzerAgent.destroy();
+        this.plannerAgent.destroy();
+        this.analyzerAgent = null;
+        this.plannerAgent = null;
         this.knwb = null;
     }
 
@@ -37,8 +42,27 @@ class Monitor {
         return knowledgeBase;
     }
 
-    generateContext(payload) {
-        return JSON.stringify(payload, null, 2);
+    getNavigationData(payload) {
+        const context = payload.app.navigation;
+        this.navigation = context;
+        return JSON.stringify(context, null, 2);
+    }
+
+    mergeAnalysisContext(analysis, payload) {
+        try {
+            const analisis = JSON.parse(analysis);
+            const windowSize = payload.app.windowSize;
+            const currentAdaptations = payload.app.currentAdaptations;
+            const resp = {
+                analisis,
+                currentAdaptations,
+                windowSize
+            }
+            return JSON.stringify(resp, null, 2);
+
+        } catch (error) {
+
+        }
     }
 }
 

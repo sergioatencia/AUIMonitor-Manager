@@ -23,12 +23,7 @@ contextBridge.exposeInMainWorld('bubble', {
 });
 
 contextBridge.exposeInMainWorld('electronAPI', {
-  // 1. Obtener la configuración actual (usado en DOMContentLoaded)
   getConfig: () => ipcRenderer.invoke('get-config'),
-
-  // 2. Actualizar/Guardar configuración (usado por saveSettings)
   updateConfig: (newConfigSection) => ipcRenderer.invoke('update-config', newConfigSection),
-
-  // 3. Abrir diálogo de carpeta (usado por selectFolder)
   selectDirectory: () => ipcRenderer.invoke('select-directory')
 })

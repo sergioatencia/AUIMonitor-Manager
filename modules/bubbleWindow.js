@@ -49,7 +49,6 @@ function createBubbleWindow(filePath) {
         const [x, y] = buwin.getPosition();
         const [winW, winH] = buwin.getSize();
 
-        // Nueva posición tentativa
         let newX = x + dx;
         let newY = y + dy;
 
@@ -89,14 +88,11 @@ function positionPopup(bubble, popup) {
     const [bw, bh] = bubble.getSize();
     const [pw, ph] = popup.getSize();
 
-    let newX = bx + bw + 10; // popup a la derecha
+    let newX = bx + bw + 10; 
     let newY = by;
 
-    // Si se sale por la derecha, muévelo a la izquierda
     if (newX + pw > screenW) newX = bx - pw - 10;
-    // Si se sale por abajo, súbelo
     if (newY + ph > screenH) newY = screenH - ph - 10;
-    // No dejar que suba demasiado
     if (newY < 0) newY = 0;
 
     popup.setPosition(Math.round(newX), Math.round(newY));

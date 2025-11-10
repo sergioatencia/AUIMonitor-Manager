@@ -42,7 +42,8 @@ ipcMain.on('apply-adaptation', (_, { uuid, pack }) => {
 ipcMain.on('ask-adaptation', (_, { text, uuid }) => {
   try {
     const { monitor, gestor } = getMonitorGestor(uuid);
-    processCurrentStatus(text, monitor, gestor);
+    const navigation = monitor.navigation;
+    processCurrentStatus(navigation, text, monitor, gestor);
   } catch (error) {
     console.error(`[${new Date().toLocaleTimeString()}] ipcMain ask-adaptation error: ${error}.`);
   }
