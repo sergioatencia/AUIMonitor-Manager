@@ -4,87 +4,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monitor-Dashboard</title>
+    <title>Monitor - Dashboard</title>
+
+    <!-- THEME GLOBAL -->
+    <link rel="stylesheet" href="../styles/chatgpt-theme.css">
+
+    <!-- CSS local -->
     <link rel="stylesheet" href="../styles/monitor.css">
 </head>
 
 <body>
+
     <div class="page-container">
-        <!-- <aside class="sidebar">            
-            <nav>
-                <ul>
-                    <li><a href="#info" class="active">Información general</a></li>
-                    <li><a href="#about">Acerca de</a></li>
-                </ul>
-            </nav>
-        </aside> -->
 
-        <!-- Contenido principal -->
         <main class="main-content">
-            <section id="info">
-                <h1>Contexto del usuario</h1>
-                <form>
-                    <div class="form-group">
-                        <p><strong>Nombre:</strong> <span id="user-name"></span></p>
-                        <p><strong>Apellidos:</strong> <span id="user-surname"></span></p>
-                        <p><strong>Sexo:</strong> <span id="user-genre"></span></p>
-                        <p><strong>Edad:</strong> <span id="user-age"></span></p>
-                        <p><strong>Ciudad:</strong> <span id="user-city"></span></p>
-                        <p><strong>País:</strong> <span id="user-country"></span></p>
-                    </div>
-                </form>
-            </section>
-            <section id="info2">
-                <h1>Contexto del entorno</h1>
-                <form>
-                    <div class="form-group">
-                        <p><strong>Zona horaria:</strong> <span id="environment-timeZone"></span></p>
-                        <p><strong>Código de país:</strong> <span id="environment-countryCode"></span></p>
-                        <p><strong>Fecha:</strong> <span id="environment-date"></span></p>
-                        <p><strong>Día de la semana:</strong> <span id="environment-day"></span></p>
-                        <p><strong>Hora:</strong> <span id="environment-time"></span> </p>
-                    </div>
-                </form>
-            </section>
-            <section id="info3">
-                <h1>Contexto de la plataforma</h1>
-                <form>
-                    <div class="form-group">
-                        <p><strong>SO:</strong> <span id="platform-os"></span></p>
-                        <p><strong>Arquitectura:</strong> <span id="platform-arch"></span></p>
-                        <p><strong>Nº de núcleos CPU:</strong> <span id="platform-numCPU"></span></p>
-                        <p><strong>RAM total:</strong> <span id="platform-totalRAM"></span></p>
-                        <p><strong>Idioma por defecto:</strong> <span id="platform-defaultLang"></span></p>
-                    </div>
-                </form>
-            </section>
-            <section id="info4">
-                <h1>Contexto de la aplicación</h1>
-                <form>
-                    <div class="form-group">
-                        <p><strong>Nombre:</strong> <span id="app-name"></span></p>
-                        <p><strong>Tipo:</strong> <span id="app-type"></span></p>
-                        <p><strong>Tamaño de la ventana:</strong> <span id="app-screen"></span></p>
-                        <p><strong>Uso de CPU:</strong> <span id="app-cpuUsage"></span></p>
-                        <p><strong>Uso de RAM:</strong> <span id="app-ramUsage"></span></p>
-                        <div id="adaptative-info">
-                            <h3>Adaptaciones actuales:</h3>
-                            <ul id="current-adaptations"></ul>
-                            <br>
-                            <h3>Adaptaciones disponibles:</h3>
-                            <ul id="available-adaptations"></ul>
-                        </div>
-                        <div id="navigation-info">
-                            <h3>Secuencia de navegación:</h3>
-                            <textarea id="navigation-sequence" rows="10" readonly></textarea>
-                        </div>
-                    </div>
-                </form>
-            </section>
-        </main>
-    </div>
-    <script type="module" src="../scripts/monitor.js"></script>
 
+            <section class="card">
+                <h1>Contexto del Usuario</h1>
+                <div class="form-group">
+                    <p><strong>Nombre:</strong> <span id="user-name"></span></p>
+                    <p><strong>Apellidos:</strong> <span id="user-surname"></span></p>
+                    <p><strong>Sexo:</strong> <span id="user-genre"></span></p>
+                    <p><strong>Edad:</strong> <span id="user-age"></span></p>
+                    <p><strong>Ciudad:</strong> <span id="user-city"></span></p>
+                    <p><strong>País:</strong> <span id="user-country"></span></p>
+                </div>
+            </section>
+
+            <section class="card">
+                <h1>Contexto del Entorno</h1>
+                <div class="form-group">
+                    <p><strong>Zona horaria:</strong> <span id="environment-timeZone"></span></p>
+                    <p><strong>Código de país:</strong> <span id="environment-countryCode"></span></p>
+                    <p><strong>Fecha:</strong> <span id="environment-date"></span></p>
+                    <p><strong>Día:</strong> <span id="environment-day"></span></p>
+                    <p><strong>Hora:</strong> <span id="environment-time"></span></p>
+                </div>
+            </section>
+
+            <section class="card">
+                <h1>Contexto de la Plataforma</h1>
+                <div class="form-group">
+                    <p><strong>SO:</strong> <span id="platform-os"></span></p>
+                    <p><strong>Arquitectura:</strong> <span id="platform-arch"></span></p>
+                    <p><strong>Núcleos CPU:</strong> <span id="platform-numCPU"></span></p>
+                    <p><strong>RAM total:</strong> <span id="platform-totalRAM"></span></p>
+                    <p><strong>Idioma:</strong> <span id="platform-defaultLang"></span></p>
+                </div>
+            </section>
+
+            <section class="card">
+                <h1>Contexto de la Aplicación</h1>
+
+                <div class="form-group">
+                    <p><strong>Nombre:</strong> <span id="app-name"></span></p>
+                    <p><strong>Tipo:</strong> <span id="app-type"></span></p>
+                    <p><strong>Ventana:</strong> <span id="app-screen"></span></p>
+                    <p><strong>CPU:</strong> <span id="app-cpuUsage"></span></p>
+                    <p><strong>RAM:</strong> <span id="app-ramUsage"></span></p>
+                </div>
+
+                <div id="adaptative-info">
+                    <h3>Adaptaciones actuales</h3>
+                    <ul id="current-adaptations"></ul>
+
+                    <h3>Adaptaciones disponibles</h3>
+                    <ul id="available-adaptations"></ul>
+                </div>
+
+                <div id="navigation-info">
+                    <h3>Secuencia de navegación</h3>
+                    <textarea id="navigation-sequence" rows="10" readonly></textarea>
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <script type="module" src="../scripts/monitor.js"></script>
 </body>
 
 </html>

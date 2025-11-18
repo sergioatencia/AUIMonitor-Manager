@@ -143,6 +143,27 @@ function getMonitorGestor(uuid) {
   }
 }
 
+async function askNewAdaptations(monitor, gestor, prompt) {
+  const resp = await monitor.plannerAgent.moreAdaptations(prompt);
+  const adaptationPackages = gestor.extractAdaptPack(resp);
+
+  if (adaptationPackages && adaptationPackages.length > 0) {
+    const popupWindow = getPopupWindow();
+    if (popupWindow && !popupWindow.isDestroyed()) {
+      try {
+        popupWindow.webContents.send('adaptation-packages', adaptationPackages, gestor.getIdCliente(), gestor.mode);
+      } catch (err) {
+        console.error(`[${new Date().toLocaleTimeString()}] Error sending MORE adaptations packages to popup: ${err.message}.`);
+      }
+    } else {
+      console.log(`[${new Date().toLocaleTimeString()}] No bubble/popup running for moreadaptations request.`);
+    }
+  } else {
+    console.log(`[${new Date().toLocaleTimeString()}] LLM moreadaptations response: `, resp);
+  }
+}
+
+
 async function applyNewConfig(newConfig) {
   for (const [uuid, gestor] of gestores.entries()) {
     if (newConfig.gestor?.mode && gestor.mode !== newConfig.gestor.mode) {
@@ -178,4 +199,4 @@ async function applyNewConfig(newConfig) {
   }
 }
 
-module.exports = { runServer, sendToClient, processCurrentStatus, getMonitorGestor, applyNewConfig };
+module.exports = { runServer, sendToClient, processCurrentStatus, getMonitorGestor, applyNewConfig, askNewAdaptations };

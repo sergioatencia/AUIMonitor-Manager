@@ -1,63 +1,96 @@
 * {
     box-sizing: border-box;
-    margin: 0;
-    padding: 0;
 }
 
-body,
-html {
-    height: 100%;
-    margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #ffffff;
+.page-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.main-content {
+    margin-top: 12px;
+    width: 100%;
+    max-width: 900px;
+    padding: 16px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.tabs-container {
+    width: 100%;
+    background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 10px 0;
+    display: flex;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.tabs {
+    display: flex;
+    gap: 7px;
+    width: 100%;
+    max-width: 900px;
 }
 
 .tablink {
-    background-color: #8b8b8b;
-    color: white;
-    float: left;
-    border: none;
+    flex: 1;
+    padding: 14px 0;
+    text-align: center;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--bg-tertiary);
     cursor: pointer;
-    padding: 12px 16px;
-    font-size: 16px;
-    width: 50%;
-    transition: background 0.3s;
+    font-size: 15px;
+    font-weight: 500;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s;
 }
 
 .tablink:hover {
-    background-color: #44ca92;
+    background: var(--border-dark);
+}
+
+.tablink.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: var(--text-inverse);
 }
 
 .tabcontent {
     display: none;
-    padding: 30px 20px;
-    color: #000000;
-    height: calc(100vh - 50px);
-    overflow-y: auto;
+    padding-top: 12px;
+    height: auto;
+    overflow-x: hidden;
 }
 
-h2 {
-    margin-bottom: 40px;
+.tabcontent.active {
+    display: block;
 }
 
 .form-row {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin: 10px 0;
+    gap: 12px;
+    margin: 16px 0;
     flex-wrap: wrap;
 }
 
-label {
-    min-width: 180px;
-    font-weight: bold;
+.form-row label {
+    min-width: 120px;
+    font-weight: 500;
+    color: var(--text-secondary);
 }
 
-input,
-select {
-    padding: 5px;
-    flex: 1;
-    max-width: 300px;
+input {
+    max-width: 200px;
+    padding: 6px 12px;
+    font-size: 14px;
+    border-radius: 9999px;
+    border: 1px solid #ffffff;
 }
 
 .input-with-unit {
@@ -66,61 +99,119 @@ select {
     gap: 10px;
 }
 
-.input-with-unit input {
-    flex: 1;
-    max-width: 100px;
-}
-
 .unit-label {
-    font-weight: bold;
+    font-weight: 500;
+    color: #555;
 }
 
-#buttonM-row,
-#buttonG-row {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
+.select-wrapper {
+    position: relative;
+    display: inline-flex;       
+    align-items: center;        
+    width: 200px;
 }
 
-button.folder {
-    background-color: #888;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 5px;
+.select-wrapper select {
+    width: 100%;
+    padding: 6px 28px 6px 12px; 
+    font-size: 14px;
+    font-weight: 400;
+    border-radius: 9999px;
+    border: 1px solid #ffffff;
+    background-color: #fff;
+    color: #111827;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
     cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-button.folder:hover {
-    background-color: #555;
+.select-wrapper::after {
+    content: "";
+    position: absolute;
+    right: 10px;               
+    display: inline-block;
+    width: 4px;
+    height: 4px;
+    border: solid #666666;
+    border-width: 0 2px 2px 0;
+    padding: 2px;
+    transform: rotate(45deg);    
+    -webkit-transform: rotate(45deg);
+    pointer-events: none;
+    top: 40%;                  
+    transform-origin: center;
+    translate: 0 -50%;          
+}
+
+input:hover,
+.select-wrapper select:hover {
+    background-color: #dbdbdb;     
+    transition: background 0.15s ease;
+}
+
+input:focus,
+.select-wrapper select:focus {
+    /* border-color: #9ca3af; */
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
+    background-color: #fff;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 14px;
+    margin-top: 24px;
 }
 
 button.save {
-    margin-top: 25px;
-    padding: 10px 15px;
-    background-color: #006fca;
-    color: white;
-    border: none;
-    border-radius: 5px;
+    padding: 6px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 9999px;
+    border: 1px solid #0d7cff;
+    background-color: transparent;
+    color: #0d7cff;
     cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
 }
 
 button.save:hover {
-    background-color: #004f88;
+    background-color: rgba(13, 124, 255, 0.08);
 }
 
 button.cancel {
-    margin-top: 25px;
-    padding: 10px 15px;
-    background-color: #db0000;
-    color: white;
-    border: none;
-    border-radius: 5px;
+    padding: 6px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 9999px;
+    border: 1px solid #e53935;
+    background-color: transparent;
+    color: #e53935;
     cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
 }
 
 button.cancel:hover {
-    background-color: #800000;
+    background-color: rgba(229, 57, 53, 0.08);
+}
+
+button.select-directory {
+    padding: 5px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 9999px;
+    border: 1px solid #707070;
+    background-color: transparent;
+    color: #333;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+button.select-directory:hover {
+    background-color: rgba(0, 0, 0, 0.04);
 }
 
 #toastContainer {
@@ -130,21 +221,19 @@ button.cancel:hover {
     transform: translateX(-50%);
     display: flex;
     flex-direction: column;
-    align-items: center;
-    z-index: 1000;
+    z-index: 2000;
 }
 
 .toast {
-    min-width: 200px;
+    min-width: 240px;
+    padding: 14px 20px;
+    border-radius: var(--radius-sm);
+    color: #fff;
+    font-weight: 500;
     margin-top: 10px;
-    justify-content: center;
-    padding: 12px 18px;
-    border-radius: 5px;
-    color: white;
-    font-weight: bold;
     opacity: 0;
     transform: translateY(-20px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
 .toast.show {
@@ -153,9 +242,9 @@ button.cancel:hover {
 }
 
 .toast.success {
-    background-color: #118d2e;
+    background-color: #10a37f;
 }
 
 .toast.error {
-    background-color: #c01829;
+    background-color: #ef4444;
 }

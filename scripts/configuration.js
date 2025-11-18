@@ -26,9 +26,11 @@ function openPage(pageName, elmnt) {
     const tablinks = document.getElementsByClassName("tablink");
     for (let i = 0; i < tablinks.length; i++) {
         tablinks[i].style.backgroundColor = "";
+        tablinks[i].style.color ="";
     }
     document.getElementById(pageName).style.display = "block";
-    elmnt.style.backgroundColor = "#363636ff";
+    elmnt.style.backgroundColor = "#444444ff";
+    elmnt.style.color = "#ffffff"
 }
 
 document.getElementById("defaultOpen").click();

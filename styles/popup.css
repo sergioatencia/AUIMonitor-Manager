@@ -1,6 +1,7 @@
+/* === Base === */
 body {
   margin: 0;
-  font-family: Arial, Helvetica, sans-serif
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 #chat-container {
@@ -8,18 +9,17 @@ body {
   flex-direction: column;
   height: 100%;
   width: 100%;
-background: radial-gradient(circle,rgba(226, 255, 179, 1) 0%, rgba(184, 217, 255, 1) 59%);
-  font-size: 13px;
   border-radius: 10px;
+  background: #f6f6f7;
 }
 
 #chat-messages {
   flex: 1;
-  padding: 8px;
+  padding: 16px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 12px;
 }
 
 #chat-form {
@@ -33,113 +33,105 @@ background: radial-gradient(circle,rgba(226, 255, 179, 1) 0%, rgba(184, 217, 255
   transform: translateX(-50%);
 }
 
-#chat-input {
-  flex: 1;
-  padding: 6px 8px;
-  border: 1px solic #ccc;
-  border-radius: 4px;
-  outline: none;
-}
-
-#chat-form button {
-  padding: 6px 12px;
-  cursor: pointer;
-  border: none;
-  background-color: #007bff;
-  color: white;
-  font-weight: bold;
-  font-size: 14px;
-  border-radius: 4px;
-}
-
-#chat-form button:hover {
-  background-color: #45a049;
-}
-
-#chat-form button:disabled {
-  background-color: #1b3f1d;
-  cursor: not-allowed;
-}
-
-.msg-bot {
-  background: #4a66ff;
-  padding: 6px 10px;
-  border-radius: 6px;
-  align-self: flex-start;
-  max-width: 95%;
-}
-
+.msg-bot,
 .msg-user {
-  background: #fdc241;
-  color: black;
-  padding: 6px 10px;
-  border-radius: 6px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  max-width: 80%;
+  line-height: 1.45;
+  font-size: 14px;
+}
+
+/* Bot = estilo ChatGPT */
+.msg-bot {
+  align-self: flex-start;
+  background: #ffffff;
+  border: 1px solid #e5e5e5;
+  color: #232323;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+}
+
+/* Usuario = estilo ChatGPT */
+.msg-user {
   align-self: flex-end;
-  max-width: 95%;
+  background: #10a37f;
+  color: white;
+  border: 1px solid #0e8e6f;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
 }
 
-.pkg-item {
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  padding: 6px 10px;
-  background-color: #fff;
-}
-
-.pkg-item h4 {
-  margin: 0 0 4px 0;
-  font-size: 0.9em;
-}
-
-.pkg-item p {
-  margin: 2px 0;
-  font-size: 0.85em;
+/* === Paquetes (estilo mensaje especial ChatGPT) === */
+.pkg-item,
+.msg-bot h4,
+.msg-bot p {
+  font-size: 14px !important;
 }
 
 .pkg-btn {
-  margin-top: 4px;
-  padding: 4px 8px;
-  background-color: #1ab43e;
-  color: white;
+  margin-top: 8px;
+  padding: 6px 10px;
+  background: #10a37f;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
+  color: white;
+  font-size: 13px;
   cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.pkg-btn:hover:not(:disabled) {
+  background: #0e8e6f;
 }
 
 .pkg-btn:disabled {
-  margin-top: 4px;
-  padding: 4px 8px;
-  background-color: #2d5f39;
-  color: white;
-  border: none;
-  border-radius: 4px;
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
+/* === Barra inferior estilo ChatGPT === */
 #chat-commands {
   position: sticky;
   bottom: 0;
+  padding: 12px;
+  background: #f6f6f7;
+  border-top: 1px solid #e5e5e5;
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 10px;
 }
 
+/* Botón "Más sugerencias" */
 #chat-commands button {
-  padding: 6px 12px;
+  padding: 10px 16px;
+  border-radius: 8px;
   border: none;
-  background-color: #007bff;
+  background: #10a37f;
   color: white;
-  font-weight: bold;
   font-size: 14px;
-  border-radius: 4px;
+  font-weight: 500;
   cursor: pointer;
+  transition: 0.15s ease;
 }
 
-#chat-commands button:hover {
-  background-color: #45a049;
+#chat-commands button:hover:not(:disabled) {
+  background: #0e8e6f;
 }
 
 #chat-commands button:disabled {
-  background-color: #1b3f1d;
+  background: #cfe7df;
+  color: #6d857c;
   cursor: not-allowed;
+}
+
+/* === Scroll suave tipo ChatGPT === */
+#chat-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+#chat-messages::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+
+#chat-messages::-webkit-scrollbar-track {
+  background: transparent;
 }

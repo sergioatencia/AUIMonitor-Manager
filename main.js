@@ -7,7 +7,7 @@ const fs = require('fs');
 const { createWindow } = require('./modules/windows');
 const { createBubbleWindow } = require('./modules/bubbleWindow');
 const { createTray } = require('./modules/tray');
-const { runServer, sendToClient, getMonitorGestor, processCurrentStatus, applyNewConfig } = require('./modules/websocketServer');
+const { runServer, sendToClient, getMonitorGestor, processCurrentStatus, applyNewConfig, askNewAdaptations } = require('./modules/websocketServer');
 const CONFIG_FILE = path.join(__dirname, 'config.json');
 
 // Variables globales
@@ -22,7 +22,7 @@ app.whenReady().then(() => {
   bubbleWindow = createBubbleWindow(path.join(__dirname, 'pages', 'bubble.html'));
   mainWindow = createWindow(path.join(__dirname, 'pages', 'monitor.html'));
   secondWindow = createWindow(path.join(__dirname, 'pages', 'gestor.html'));
-  configWindow = createWindow(path.join(__dirname, 'pages', 'configuration.html'), 500, 500);
+  configWindow = createWindow(path.join(__dirname, 'pages', 'configuration.html'), 550, 450);
 
 
   createTray(mainWindow, secondWindow, configWindow);
@@ -42,8 +42,7 @@ ipcMain.on('apply-adaptation', (_, { uuid, pack }) => {
 ipcMain.on('ask-adaptation', (_, { text, uuid }) => {
   try {
     const { monitor, gestor } = getMonitorGestor(uuid);
-    const navigation = monitor.navigation;
-    processCurrentStatus(navigation, text, monitor, gestor);
+    askNewAdaptations(monitor, gestor, text);
   } catch (error) {
     console.error(`[${new Date().toLocaleTimeString()}] ipcMain ask-adaptation error: ${error}.`);
   }

@@ -60,11 +60,20 @@ class AUIAgent {
     }
   }
 
-  // async sendKnwBase(knwb) {
-  //   if (!this.chat) throw new Error(`[${new Date().toLocaleTimeString()}] LLM agent not running. Please call the init() function first.`);
-  //   const resp = await this.chat.sendMessage({ message: knwb });
-  //   //console.log("[AGENT] Respuesta base conocimiento:", resp.text);
-  // }
+  async moreAdaptations(prompt) {
+    if (!this.chat) throw new Error(`[${new Date().toLocaleTimeString()}] LLM agent not running. Please call the init() function first.`);
+    if (this.type === 'analyzer-data') throw new Error(`[${new Date().toLocaleTimeString()}] You supposed to not be here (askAdHocAdaptation function).`);
+    try {
+      const resp = await this.chat.sendMessage({ message: prompt }); 
+      const respText = resp.text;
+      console.log("\n====================\nResultado de moreAdaptations:\n===========================\n", respText, '\n====================\n');
+      const cleanedResp = respText.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+      return JSON.parse(cleanedResp);
+    } catch (err) {
+      console.error(`[${new Date().toLocaleTimeString()}] Procesing LLM moreAdaptations planner agent answer error: ${err}.`);
+      return [];
+    }
+  }
 
   async analyzeContext(context) {
     if (!this.chat) throw new Error(`[${new Date().toLocaleTimeString()}] LLM agent not running. Please call the init() function first.`);
@@ -85,7 +94,7 @@ class AUIAgent {
     try {
       const resp = await this.chat.sendMessage({ message: analysisResp });
       const respText = resp.text;
-      console.log("\n====================\nResultados de planAdapts:\n===========================\n", respText,'\n====================\n');
+      console.log("\n====================\nResultados de planAdapts:\n===========================\n", respText, '\n====================\n');
       const cleanedResp = respText.replace(/^```json\s*/, '').replace(/\s*```$/, '');
 
       return JSON.parse(cleanedResp);
