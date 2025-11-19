@@ -1,4 +1,3 @@
-/* === Base === */
 body {
   margin: 0;
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
@@ -40,9 +39,11 @@ body {
   max-width: 80%;
   line-height: 1.45;
   font-size: 14px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Bot = estilo ChatGPT */
 .msg-bot {
   align-self: flex-start;
   background: #ffffff;
@@ -51,7 +52,6 @@ body {
   box-shadow: 0 1px 2px rgba(0,0,0,0.06);
 }
 
-/* Usuario = estilo ChatGPT */
 .msg-user {
   align-self: flex-end;
   background: #10a37f;
@@ -60,11 +60,23 @@ body {
   box-shadow: 0 1px 2px rgba(0,0,0,0.06);
 }
 
-/* === Paquetes (estilo mensaje especial ChatGPT) === */
 .pkg-item,
 .msg-bot h4,
 .msg-bot p {
   font-size: 14px !important;
+}
+
+.msg-content {
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.msg-time{
+  align-self: flex-end;
+  font-size: 9px;
+  color: #8d8d8d;
+  margin-top: 4px;
+  margin-bottom: -2px;
 }
 
 .pkg-btn {
@@ -88,7 +100,6 @@ body {
   cursor: not-allowed;
 }
 
-/* === Barra inferior estilo ChatGPT === */
 #chat-commands {
   position: sticky;
   bottom: 0;
@@ -97,9 +108,9 @@ body {
   border-top: 1px solid #e5e5e5;
   display: flex;
   justify-content: center;
+  border-radius: 0 0 10px 10px;
 }
 
-/* Botón "Más sugerencias" */
 #chat-commands button {
   padding: 10px 16px;
   border-radius: 8px;
@@ -122,7 +133,6 @@ body {
   cursor: not-allowed;
 }
 
-/* === Scroll suave tipo ChatGPT === */
 #chat-messages::-webkit-scrollbar {
   width: 6px;
 }

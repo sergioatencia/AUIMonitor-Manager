@@ -7,7 +7,7 @@ const fs = require('fs');
 const { createWindow } = require('./modules/windows');
 const { createBubbleWindow } = require('./modules/bubbleWindow');
 const { createTray } = require('./modules/tray');
-const { runServer, sendToClient, getMonitorGestor, processCurrentStatus, applyNewConfig, askNewAdaptations } = require('./modules/websocketServer');
+const { runServer, sendToClient, getMonitorGestor, applyNewConfig, askNewAdaptations } = require('./modules/websocketServer');
 const CONFIG_FILE = path.join(__dirname, 'config.json');
 
 // Variables globales
@@ -21,7 +21,7 @@ let appConfig = require(CONFIG_FILE);
 app.whenReady().then(() => {
   bubbleWindow = createBubbleWindow(path.join(__dirname, 'pages', 'bubble.html'));
   mainWindow = createWindow(path.join(__dirname, 'pages', 'monitor.html'));
-  secondWindow = createWindow(path.join(__dirname, 'pages', 'gestor.html'));
+  secondWindow = createWindow(path.join(__dirname, 'pages', 'gestor.html'),700);
   configWindow = createWindow(path.join(__dirname, 'pages', 'configuration.html'), 550, 450);
 
 

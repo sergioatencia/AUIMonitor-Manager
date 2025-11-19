@@ -75,10 +75,10 @@ html {
     box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
 
-/* Adaptation groups */
 .adaptation-group {
     background-color: #f1f1f3;
     padding: 1rem;
+    margin-bottom: 10px;
     border-radius: 10px;
     display: flex;
     flex-wrap: wrap;
@@ -91,7 +91,6 @@ html {
     margin-bottom: 0.3rem;
 }
 
-/* Buttons */
 .adaptation-group button {
     padding: 0.5rem 1.2rem;
     background-color: #ececf1;
@@ -107,28 +106,6 @@ html {
     transform: translateY(-1px);
 }
 
-/* Prompt area */
-.prompt-block textarea {
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 0.8rem;
-    color: #202123;
-}
-
-#send-prompt {
-    background-color: #10a37f;
-    color: #fff;
-    padding: 0.6rem 1rem;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    transition: background 0.2s ease;
-}
-
-#send-prompt:hover {
-    background-color: #0e8a6c;
-}
 
 /* Scrollbars */
 .main-content::-webkit-scrollbar {

@@ -1,10 +1,6 @@
 let currentUuid = null; 
 let lastPayload = {};
 
-// document.addEventListener('DOMContentLoaded', () => {
-//     promptGenerator();
-// });
-
 window.monitor.onUpdate((data) => {
     currentUuid = data.uuid;
     console.log(`[${new Date().toLocaleTimeString()}] Received data in manager: ${data.info}.`);
@@ -72,49 +68,13 @@ window.monitor.onUpdate((data) => {
     });
 });
 
-// Limpieza de la UI cuando el cliente se desconecta
 window.monitor.onClearContent(() => {
     console.log(`[${new Date().toLocaleTimeString()}] Clearing gestor UI (client disconnected).`);
-
-    // 🔹 Reinicia variables internas
     currentUuid = null;
     lastPayload = {};
-
-    // 🔹 Limpia el contenedor principal de botones
     const container = document.getElementById('buttons-container');
     if (container) {
         container.innerHTML = '';
     }
 
 });
-
-
-
-// function promptGenerator() {
-//     const sendBtn = document.getElementById('send-prompt');
-//     const inputTxt = document.getElementById('prompt-input');
-//     const outputTxt = document.getElementById('prompt-output');
-
-//     sendBtn.onclick = async () => {
-//         const clearTxt = inputTxt.value.trim();
-
-//         if (!clearTxt) {
-//             alert("El campo de entrada no puede estar vacío.");
-//             return;
-//         }
-//         if (!currentUuid) {
-//             alert("UUID no disponible aún. Espera unos segundos.");
-//             return;
-//         }
-
-//         outputTxt.value = "Generando respuesta...";
-
-//         try {
-//             const result = await window.monitor.generatePrompt(JSON.parse(inputTxt), currentUuid);
-//             outputTxt.value = result || "No se obtuvo respuesta.";
-//         } catch (error) {
-//             console.error(error);
-//             outputTxt.value = "Error al generar contenido.";
-//         }
-//     };
-// } 

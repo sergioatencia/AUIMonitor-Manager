@@ -7,6 +7,12 @@ class Gestor {
     getIdCliente(){
         return this.idCliente;
     }
+    getAdaptaciones(){
+        return this.adaptaciones;
+    }
+    setAdaptaciones(adaptaciones){
+        this.adaptaciones = adaptaciones;
+    }
     destroy() {
         this.idCliente = null;
         this.mode = null;        
@@ -36,8 +42,8 @@ class Gestor {
         } else {
             console.log(`[${new Date().toLocaleTimeString()}] No suggestions to client ${this.idCliente}.`);
         }
-
-        return packages;
+        this.setAdaptaciones(packages);
+        //return packages;
     }
 }
 

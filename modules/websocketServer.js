@@ -44,7 +44,17 @@ function runServer(mainWindow, secondWindow, config) {
         const gestor = gestores.get(ws.uuid);
 
         if (data.type === 'last-session') {
-          const filePath = path.join(__dirname, '../user_sessions', data.filename);
+          const sessionsDirFromApp = config?.monitor?.sessionPath;
+          const sessionsDir = sessionsDirFromApp || 'user_sessions';
+          let resolvedSessionsDir;
+          if (path.isAbsolute(sessionsDir)) {
+            resolvedSessionsDir = sessionsDir;
+          } else {
+            resolvedSessionsDir = path.resolve(__dirname, sessionsDir);
+          }
+
+          //const filePath = path.join(__dirname, '../user_sessions', data.filename);
+          const filePath = path.join(resolvedSessionsDir, data.filename);
           fs.mkdirSync(path.dirname(filePath), { recursive: true });
 
           const content = monitor.generateKnowledgeBase(data.payload);
@@ -114,7 +124,8 @@ async function processCurrentStatus(navigation, data, monitor, gestor) {
   const analysisUX = await monitor.analyzerAgent.analyzeContext(navigation);
   const context = monitor.mergeAnalysisContext(analysisUX, data);
   const resp = await monitor.plannerAgent.planAdapts(context);
-  const adaptationPackages = gestor.extractAdaptPack(resp);
+  gestor.extractAdaptPack(resp);
+  const adaptationPackages = gestor.getAdaptaciones();
 
   if (adaptationPackages && adaptationPackages.length > 0) {
     const popupWindow = getPopupWindow();
@@ -145,8 +156,8 @@ function getMonitorGestor(uuid) {
 
 async function askNewAdaptations(monitor, gestor, prompt) {
   const resp = await monitor.plannerAgent.moreAdaptations(prompt);
-  const adaptationPackages = gestor.extractAdaptPack(resp);
-
+  gestor.extractAdaptPack(resp);
+  const adaptationPackages = gestor.getAdaptaciones();
   if (adaptationPackages && adaptationPackages.length > 0) {
     const popupWindow = getPopupWindow();
     if (popupWindow && !popupWindow.isDestroyed()) {
