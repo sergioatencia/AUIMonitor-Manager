@@ -1,5 +1,22 @@
 let lastPayload = {};
 
+function openPage(pageName, elmnt) {
+    const tabcontent = document.getElementsByClassName("tabcontent");
+    for (let i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    const tablinks = document.getElementsByClassName("tablink");
+    for (let i = 0; i < tablinks.length; i++) {
+        tablinks[i].style.backgroundColor = "";
+        tablinks[i].style.color ="";
+    }
+    document.getElementById(pageName).style.display = "block";
+    elmnt.style.backgroundColor = "#444444ff";
+    elmnt.style.color = "#ffffff"
+}
+
+document.getElementById("defaultOpen").click();
+
 window.monitor.onUpdate((data) => {
     console.log(`[${new Date().toLocaleTimeString()}] Received data in monitor: ${data}.`);
     const payload = data.info.payload;
