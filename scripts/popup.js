@@ -44,25 +44,45 @@ window.addEventListener('DOMContentLoaded', () => {
 
         pkg.adaptations.forEach(a => {
           const line = document.createElement('p');
-          line.innerHTML = `<b>${a.key}</b>: ${a.valor} <small>(${a.motivo})</small>`;
+          line.innerHTML = `<b>${a.key}</b>: ${a.valor}`;
           content.appendChild(line);
+          const anotherLine = document.createElement('p');
+          anotherLine.innerHTML = `<small>${a.motivo}</small>`;
+          content.appendChild(anotherLine);
         });
         pkgDiv.appendChild(content);
-        const btn = document.createElement('button');
-        btn.textContent = 'Aplicar';
-        btn.className = 'pkg-btn';
-        btn.onclick = () => {
+        const applyBtn = document.createElement('button');
+        applyBtn.textContent = 'Aplicar';
+        applyBtn.className = 'pkg-btn';
+        applyBtn.onclick = () => {
           if (currentUUID) {
             window.bubble.applyAdaptation(currentUUID, pkg);
             setTimeout(() => {
               addMessage(`✅ Paquete "${pkg.packageName}" aplicado.`, 'bot');
             }, 1500);
-            btn.disabled = true;
+            applyBtn.disabled = true;
+            rejectBtn.disabled = true;
           } else {
             addMessage('⚠️ No hay cliente seleccionado.', 'bot');
           }
         };
-        pkgDiv.appendChild(btn);
+
+        const rejectBtn = document.createElement('button');
+        rejectBtn.textContent = 'Rechazar';
+        rejectBtn.className = 'pkg-btn pkg-btn-reject';
+        rejectBtn.style.marginLeft = "8px";
+        rejectBtn.onclick = () => {
+          applyBtn.disabled = true;
+          rejectBtn.disabled = true;
+          addMessage(`❌ Paquete "${pkg.packageName}" rechazado.`, 'bot');
+        };
+        const btnRow = document.createElement('div');
+        btnRow.className = 'pkg-btn-row';
+
+        btnRow.appendChild(applyBtn);
+        btnRow.appendChild(rejectBtn);
+
+        pkgDiv.appendChild(btnRow);
 
         const time = document.createElement('span');
         time.className = 'msg-time';
@@ -76,14 +96,25 @@ window.addEventListener('DOMContentLoaded', () => {
       if (packages.length === 1) {
         packages.forEach(pkg => {
           if (currentUUID) {
-            let texto = `✅ Paquete ${pkg.packageName} aplicado automáticamente. Adaptaciones realizadas:\n`;
+            const pkgDiv = document.createElement('div');
+            pkgDiv.className = 'msg-bot';
+            const content = document.createElement('div');
+            content.className = 'msg-content';
+            const title = document.createElement('h4');
+            title.textContent = `📦✅ Adaptaciones aplicadas automaticamente: `;
+            content.appendChild(title);
+
             pkg.adaptations.forEach(a => {
-              texto += `${a.key}: ${a.valor} (${a.motivo})\n`;
+              const line = document.createElement('p');
+              line.innerHTML = `<b>${a.key}</b>: ${a.valor}`;
+              content.appendChild(line);
+              const anotherLine = document.createElement('p');
+              anotherLine.innerHTML = `<small>${a.motivo}</small>`;
+              content.appendChild(anotherLine);
             });
-            setTimeout(() => {
-              addMessage(texto, 'bot');
-            }, 1500);
+            pkgDiv.appendChild(content);
             window.bubble.applyAdaptation(currentUUID, pkg);
+            messagesDiv.appendChild(pkgDiv);
           }
         });
       };
@@ -111,7 +142,7 @@ window.addEventListener('DOMContentLoaded', () => {
     window.bubble.askAdaptation(text, currentUUID);
   });
 
-  addMessage('Bienvenido! 😊 Soy mAUrI, tu agente de IU adaptativas.', 'bot');
+  addMessage('Bienvenido! 😊 Soy mAUrI, tu asistente de IU adaptativas.', 'bot');
 });
 
 window.bubble.onClearContent(() => {
@@ -134,7 +165,7 @@ window.bubble.onClearContent(() => {
     msg.className = 'msg-bot';
     const content = document.createElement('div');
     content.className = 'msg-content';
-    content.textContent = 'Bienvenido! 😊 Soy mAUrI, tu agente de IU adaptativas.';
+    content.textContent = 'Bienvenido! 😊 Soy mAUrI, tu asistente de IU adaptativas.';
     const time = document.createElement('span');
     time.className = 'msg-time';
     time.textContent = getTimeMessage();

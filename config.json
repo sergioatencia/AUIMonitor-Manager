@@ -1,8 +1,8 @@
 {
   "monitor": {
-    "sampleInterval": "60",
-    "sessionPath": "./users_sessions",
-    "agente": {
+    "sampleInterval": "40",
+    "sessionPath": "../users_sessions",
+    "bridge": {
       "model": "gemini-2.0-flash"
     }
   },

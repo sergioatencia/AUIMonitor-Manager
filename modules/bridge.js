@@ -8,7 +8,7 @@ const analyzerDataInstructions = "**Directriz Principal: Actúa como un Analista
 
 const plannerAdaptInstruction = "**Eres un agente de Interfaz de Usuario Adaptativa (AUI)** **OBJETIVO PRINCIPAL:** Sugerir adaptaciones para mejorar la Experiencia de Usuario (UX), basándose estrictamente en los principios de usabilidad y accesibilidad. **MECANISMO DE OPERACIÓN:** 1. **Contexto Inicial:** Recibes una base de conocimiento en formato JSON detallando el contexto de uso (usuario, entorno, plataforma, aplicación). 2. **Análisis de Datos:** Durante la conversación, recibes un informe de la UX, junto a las adaptaciones aplicadas actualmente y al tamaño de la ventana de la aplicación. 3. **Sugerencia de Adaptaciones:** * Evalúa si las adaptaciones son **necesarias** y **acordes** a los valores disponibles. * Agrupa las adaptaciones sugeridas en **paquetes** (ej: paquete_1, paquete_2). * **NO INVENTES** adaptaciones. Sólo puedes usar las adaptaciones recogidas dentro del contexto de la aplicación ('availableAdaptations'). * Si recibes el mensaje 'Sugiéreme nuevas adaptaciones', repite el proceso basándote en el **último análisis de datos** proporcionado, pero **SOLO UN PAQUETE COMO MÁXIMO**. **FORMATO DE RESPUESTA REQUERIDO (ESTRICTO):** * Debes responder **SOLO** con un objeto JSON válido. * **NO** uses delimitadores de bloque de código (ej: ```json o ```). * El formato debe seguir estrictamente esta estructura: `{'sugerencias':{'paquete_N':{<adaptacion>:{'valor':'<valor_sugerido>','motivo':'<motivo_breve>'},...},...}}` * **Claves Requeridas:** * `'valor'`: El valor específico que se sugiere para la adaptación. * `'motivo'`: Una justificación muy breve y concisa de por qué se aplica esa adaptación con ese valor, orientada a usabilidad/accesibilidad.";
 
-class AUIAgent {
+class LLMBridge {
   constructor(model = "gemini-2.0-flash", type = 'analyzer-data') {
     this.model = model;
     this.type = type;
@@ -30,7 +30,7 @@ class AUIAgent {
       } else if (this.type === 'planner-adaptation') {
         if (knwb === null) {
           this.chat = null;
-          throw new Error('[AUIAgent-DM] Knowledge base not found.');
+          throw new Error('[LLMBridge-DM] Knowledge base not found.');
         }
         else {
           this.knwbcopy = knwb;
@@ -52,16 +52,16 @@ class AUIAgent {
       }
       else {
         this.chat = null;
-        throw new Error(`[AUIAgent] Unrecognised agent type: ${this.type}.`);
+        throw new Error(`[LLMBridge] Unrecognised bridge type: ${this.type}.`);
       }
     } catch (err) {
-      console.error(`[AUIAgent] Error initializing chat: ${err.message}`);
+      console.error(`[LLMBridge] Error initializing chat: ${err.message}`);
       this.chat = null;
     }
   }
 
   async moreAdaptations(prompt) {
-    if (!this.chat) throw new Error(`[${new Date().toLocaleTimeString()}] LLM agent not running. Please call the init() function first.`);
+    if (!this.chat) throw new Error(`[${new Date().toLocaleTimeString()}] LLM bridge not running. Please call the init() function first.`);
     if (this.type === 'analyzer-data') throw new Error(`[${new Date().toLocaleTimeString()}] You supposed to not be here (askAdHocAdaptation function).`);
     try {
       const resp = await this.chat.sendMessage({ message: prompt }); 
@@ -70,13 +70,13 @@ class AUIAgent {
       const cleanedResp = respText.replace(/^```json\s*/, '').replace(/\s*```$/, '');
       return JSON.parse(cleanedResp);
     } catch (err) {
-      console.error(`[${new Date().toLocaleTimeString()}] Procesing LLM moreAdaptations planner agent answer error: ${err}.`);
+      console.error(`[${new Date().toLocaleTimeString()}] Procesing LLM moreAdaptations planner bridge answer error: ${err}.`);
       return [];
     }
   }
 
   async analyzeContext(context) {
-    if (!this.chat) throw new Error(`[${new Date().toLocaleTimeString()}] LLM agent not running. Please call the init() function first.`);
+    if (!this.chat) throw new Error(`[${new Date().toLocaleTimeString()}] LLM bridge not running. Please call the init() function first.`);
     if (this.type === 'planner-adaptation') throw new Error(`[${new Date().toLocaleTimeString()}] You supposed to not be here (analyzeData function).`);
     try {
       const resp = await this.chat.sendMessage({ message: context });
@@ -84,12 +84,12 @@ class AUIAgent {
       console.log('\n====================\nResultado de analyzeContext:\n====================\n', respText, '\n====================\n');
       return respText;
     } catch (error) {
-      console.error(`[${new Date().toLocaleTimeString()}] Procesing LLM analysis agent error: ${error}.`);
+      console.error(`[${new Date().toLocaleTimeString()}] Procesing LLM analysis bridge error: ${error}.`);
     }
   }
 
   async planAdapts(analysisResp) {
-    if (!this.chat) throw new Error(`[${new Date().toLocaleTimeString()}] LLM agent not running. Please call the init() function first.`);
+    if (!this.chat) throw new Error(`[${new Date().toLocaleTimeString()}] LLM bridge not running. Please call the init() function first.`);
     if (this.type === 'analyzer-data') throw new Error(`[${new Date().toLocaleTimeString()}] You supposed to not be here (planAdapts function).`);
     try {
       const resp = await this.chat.sendMessage({ message: analysisResp });
@@ -99,7 +99,7 @@ class AUIAgent {
 
       return JSON.parse(cleanedResp);
     } catch (err) {
-      console.error(`[${new Date().toLocaleTimeString()}] Procesing LLM planner agent answer error: ${err}.`);
+      console.error(`[${new Date().toLocaleTimeString()}] Procesing LLM planner bridge answer error: ${err}.`);
       return [];
     }
   }
@@ -120,10 +120,10 @@ class AUIAgent {
         this.chat = null;
         this.knwbcopy = null;
       } catch (err) {
-        console.error(`[AUIAgent] Error while destroying chat: ${err.message}`);
+        console.error(`[LLMBridge] Error while destroying chat: ${err.message}`);
       }
     }
   }
 }
 
-module.exports = AUIAgent;
+module.exports = LLMBridge;

@@ -1,12 +1,12 @@
-const AUIAgent = require('./agent');
+const LLMBridge = require('./bridge');
 
 class Monitor {
     constructor(idclient = null, monitorConfig = {}) {
         this.idclient = idclient;
         this.data = null;
         this.navigation = null;
-        this.analyzerAgent = new AUIAgent(monitorConfig.agente.model, "analyzer-data");
-        this.plannerAgent = new AUIAgent(monitorConfig.agente.model, "planner-adaptation");
+        this.analyzerBridge = new LLMBridge(monitorConfig.bridge.model, "analyzer-data");
+        this.plannerBridge = new LLMBridge(monitorConfig.bridge.model, "planner-adaptation");
         this.knwb = null;
     }
     getIdClient() {
@@ -22,17 +22,17 @@ class Monitor {
         this.knwb = knwb;
     }
 
-    async launchAgent() {
-        await this.analyzerAgent.run();
-        await this.plannerAgent.run(this.knwb);
+    async launchBridge() {
+        await this.analyzerBridge.run();
+        await this.plannerBridge.run(this.knwb);
     }
     destroy() {
         this.idclient = null;
         this.data = null;
-        this.analyzerAgent.destroy();
-        this.plannerAgent.destroy();
-        this.analyzerAgent = null;
-        this.plannerAgent = null;
+        this.analyzerBridge.destroy();
+        this.plannerBridge.destroy();
+        this.analyzerBridge = null;
+        this.plannerBridge = null;
         this.knwb = null;
     }
 

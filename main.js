@@ -7,7 +7,7 @@ const fs = require('fs');
 const { createWindow } = require('./modules/windows');
 const { createBubbleWindow } = require('./modules/bubbleWindow');
 const { createTray } = require('./modules/tray');
-const { runServer, sendToClient, getMonitorGestor, applyNewConfig, askNewAdaptations } = require('./modules/websocketServer');
+const { startCommunication, sendToClient, getMonitorGestor, applyNewConfig, askNewAdaptations } = require('./modules/communications');
 const CONFIG_FILE = path.join(__dirname, 'config.json');
 
 // Variables globales
@@ -26,7 +26,7 @@ app.whenReady().then(() => {
 
 
   createTray(mainWindow, secondWindow, configWindow);
-  runServer(mainWindow, secondWindow, appConfig);
+  startCommunication(mainWindow, secondWindow, appConfig);
 });
 
 app.on('window-all-closed', () => {

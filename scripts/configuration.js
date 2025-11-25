@@ -1,16 +1,16 @@
 let initialConfig = null;
 
 window.addEventListener('DOMContentLoaded', async () => {
-    if (!window.electronAPI) return;
+    if (!window.api) return;
 
-    const config = await window.electronAPI.getConfig();
+    const config = await window.api.getConfig();
     console.log("Configuración actual:", config);
     initialConfig = config;
 
     if (config.monitor) {
         document.getElementById('sample-interval').value = config.monitor.sampleInterval ?? 60;
         document.getElementById('sessionPath').value = config.monitor.sessionPath ?? '';
-        document.getElementById('model-agent').value = config.monitor.agente.model ?? 'gemini-2.0-flash';
+        document.getElementById('model-bridge').value = config.monitor.bridge.model ?? 'gemini-2.0-flash';
     }
 
     if (config.gestor) {
@@ -36,8 +36,8 @@ function openPage(pageName, elmnt) {
 document.getElementById("defaultOpen").click();
 
 async function selectFolder() {
-    if (window.electronAPI && window.electronAPI.selectDirectory) {
-        const folderPath = await window.electronAPI.selectDirectory();
+    if (window.api && window.api.selectDirectory) {
+        const folderPath = await window.api.selectDirectory();
         if (folderPath) {
             document.getElementById("sessionPath").value = folderPath;
         }
@@ -67,8 +67,8 @@ async function saveSettings(formId) {
     if (formId === 'monitorForm') update = { monitor: data };
     if (formId === 'gestorForm') update = { gestor: data };
 
-    if (window.electronAPI?.updateConfig) {
-        const result = await window.electronAPI.updateConfig(update);
+    if (window.api?.updateConfig) {
+        const result = await window.api.updateConfig(update);
         if (result?.success) {
             showToast("✅ Cambios guardados", "success");
         } else {

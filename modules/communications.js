@@ -13,7 +13,7 @@ const monitores = new Map();
 const gestores = new Map();
 const intervals = new Map();
 
-function runServer(mainWindow, secondWindow, config) {
+function startCommunication(mainWindow, secondWindow, config) {
   const wss = new WebSocket.Server({ port });
   console.log(`[${new Date().toLocaleTimeString()}] WebSocket server running at ws://${url}:${port}.`);
 
@@ -30,7 +30,7 @@ function runServer(mainWindow, secondWindow, config) {
     ws.send(JSON.stringify({ type: 'id-assign', uuid: ws.uuid }));
     //Crea monitor para cliente
     const monitor = new Monitor(ws.uuid, config.monitor);
-    //------------> await monitor.setAgent();
+    //------------> await monitor.setBridge();
     monitores.set(ws.uuid, monitor);
     //Crea gestor para cliente
     const gestor = new Gestor(ws.uuid, config.gestor);
@@ -45,7 +45,7 @@ function runServer(mainWindow, secondWindow, config) {
 
         if (data.type === 'last-session') {
           const sessionsDirFromApp = config?.monitor?.sessionPath;
-          const sessionsDir = sessionsDirFromApp || 'user_sessions';
+          const sessionsDir = sessionsDirFromApp || '../user_sessions';
           let resolvedSessionsDir;
           if (path.isAbsolute(sessionsDir)) {
             resolvedSessionsDir = sessionsDir;
@@ -59,8 +59,8 @@ function runServer(mainWindow, secondWindow, config) {
 
           const content = monitor.generateKnowledgeBase(data.payload);
           await fs.promises.writeFile(filePath, content, 'utf-8');
-          //await monitor.agent.sendKnwBase(content);
-          await monitor.launchAgent();
+          //await monitor.bridgesendKnwBase(content);
+          await monitor.launchBridge();
           interval = setInterval(() => {
             if (ws.readyState === WebSocket.OPEN) {
               ws.send(JSON.stringify({ type: 'current-state' }));
@@ -121,9 +121,9 @@ function sendToClient(uuid, payload) {
 }
 
 async function processCurrentStatus(navigation, data, monitor, gestor) {
-  const analysisUX = await monitor.analyzerAgent.analyzeContext(navigation);
+  const analysisUX = await monitor.analyzerBridge.analyzeContext(navigation);
   const context = monitor.mergeAnalysisContext(analysisUX, data);
-  const resp = await monitor.plannerAgent.planAdapts(context);
+  const resp = await monitor.plannerBridge.planAdapts(context);
   gestor.extractAdaptPack(resp);
   const adaptationPackages = gestor.getAdaptaciones();
 
@@ -155,7 +155,7 @@ function getMonitorGestor(uuid) {
 }
 
 async function askNewAdaptations(monitor, gestor, prompt) {
-  const resp = await monitor.plannerAgent.moreAdaptations(prompt);
+  const resp = await monitor.plannerBridge.moreAdaptations(prompt);
   gestor.extractAdaptPack(resp);
   const adaptationPackages = gestor.getAdaptaciones();
   if (adaptationPackages && adaptationPackages.length > 0) {
@@ -200,14 +200,14 @@ async function applyNewConfig(newConfig) {
   }
 
   for (const [uuid, monitor] of monitores.entries()) {
-    const currentModel = monitor.analyzerAgent.modelo;
-    const newModel = newConfig.monitor?.agente?.modelo;
+    const currentModel = monitor.analyzerBridge.modelo;
+    const newModel = newConfig.monitor?.bridge?.modelo;
     if (newModel && currentModel !== newModel) {
       console.log(`[${new Date().toLocaleTimeString()}] Changing LLM model for monitor ${uuid} → ${newModel}`);
-      await monitor.analyzerAgent.changeModel(newModel);
-      await monitor.plannerAgent.changeModel(newModel);
+      await monitor.analyzerBridge.changeModel(newModel);
+      await monitor.plannerBridge.changeModel(newModel);
     }
   }
 }
 
-module.exports = { runServer, sendToClient, processCurrentStatus, getMonitorGestor, applyNewConfig, askNewAdaptations };
+module.exports = { startCommunication, sendToClient, processCurrentStatus, getMonitorGestor, applyNewConfig, askNewAdaptations };

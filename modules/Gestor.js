@@ -33,7 +33,6 @@ class Gestor {
                     const suggestion = packContent[adaptKey];
                     const valor = suggestion.valor;
                     const motivo = suggestion.motivo;
-                    // console.log(`[Cliente ${this.idCliente}]\n\tAdaptación: ${adaptKey}\n\tValor sugerido: ${valor}\n\tMotivo: ${motivo}`);
                     adaptations.push({ key: adaptKey, valor, motivo });
                 }
 

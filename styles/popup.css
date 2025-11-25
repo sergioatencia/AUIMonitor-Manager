@@ -49,7 +49,7 @@ body {
   background: #ffffff;
   border: 1px solid #e5e5e5;
   color: #232323;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
 }
 
 .msg-user {
@@ -57,7 +57,7 @@ body {
   background: #10a37f;
   color: white;
   border: 1px solid #0e8e6f;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
 }
 
 .pkg-item,
@@ -71,7 +71,7 @@ body {
   line-height: 1.45;
 }
 
-.msg-time{
+.msg-time {
   align-self: flex-end;
   font-size: 9px;
   color: #8d8d8d;
@@ -82,17 +82,19 @@ body {
 .pkg-btn {
   margin-top: 8px;
   padding: 6px 10px;
-  background: #10a37f;
-  border: none;
-  border-radius: 8px;
-  color: white;
+  background-color: transparent;
+  border: 1px solid #0d7cff;
+  border-radius: 9999px;
+  color: #0070f0;
   font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
-  transition: 0.2s ease;
+  transition: background 0.2s ease, transform 0.1s ease;
 }
 
 .pkg-btn:hover:not(:disabled) {
-  background: #0e8e6f;
+  color: #0d7eff63;
+  border-color: #0d7eff63;
 }
 
 .pkg-btn:disabled {
@@ -100,12 +102,40 @@ body {
   cursor: not-allowed;
 }
 
+.pkg-btn-reject {
+  background-color: transparent;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid #e53935;
+  color: #e42421;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.pkg-btn-reject:hover:not(:disabled) {
+  color: #e5383562;
+  border-color: #e5383562;
+}
+.pkg-btn-reject:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.pkg-btn-row {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  margin-top: 8px;
+  justify-content: center;
+}
+
 #chat-commands {
   position: sticky;
   bottom: 0;
   padding: 12px;
   background: #f6f6f7;
-  border-top: 1px solid #e5e5e5;
+  border-top: 2px solid #e5e5e5;
   display: flex;
   justify-content: center;
   border-radius: 0 0 10px 10px;
@@ -113,23 +143,23 @@ body {
 
 #chat-commands button {
   padding: 10px 16px;
-  border-radius: 8px;
-  border: none;
-  background: #10a37f;
-  color: white;
+  border-radius: 9999px;
+  border: 1px solid #707070;
+  background-color: transparent;
+  color: #333;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: 0.15s ease;
+  transition: background 0.2s ease, transform 0.1s ease;
 }
 
 #chat-commands button:hover:not(:disabled) {
-  background: #0e8e6f;
+  border-color: #00000067;
+  color: #00000067;
 }
 
 #chat-commands button:disabled {
-  background: #cfe7df;
-  color: #6d857c;
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
@@ -138,8 +168,8 @@ body {
 }
 
 #chat-messages::-webkit-scrollbar-thumb {
-  background: #ccc;
-  border-radius: 3px;
+  background-color: #bfc0c5;
+    border-radius: 6px;
 }
 
 #chat-messages::-webkit-scrollbar-track {

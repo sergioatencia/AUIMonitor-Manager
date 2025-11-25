@@ -3,7 +3,6 @@ const { contextBridge, ipcRenderer } = require('electron');
 contextBridge.exposeInMainWorld('monitor', {
   onUpdate: (callback) => {
     ipcRenderer.on('monitor-update', (event, data) => callback(data));
-    // window.addEventListener('monitor-update', (event) => callback(event.detail));
   },
   sendMutation: (uuid, mutation, value) => {
     console.log(`[Monitor] Enviando mutación ${mutation}=${value} al cliente ${uuid}.`);
@@ -22,7 +21,7 @@ contextBridge.exposeInMainWorld('bubble', {
   onClearContent: (callback) => ipcRenderer.on('clear-bubble-content', callback),
 });
 
-contextBridge.exposeInMainWorld('electronAPI', {
+contextBridge.exposeInMainWorld('api', {
   getConfig: () => ipcRenderer.invoke('get-config'),
   updateConfig: (newConfigSection) => ipcRenderer.invoke('update-config', newConfigSection),
   selectDirectory: () => ipcRenderer.invoke('select-directory')
