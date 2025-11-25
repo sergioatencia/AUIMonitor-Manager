@@ -15,7 +15,8 @@ contextBridge.exposeInMainWorld('monitor', {
 contextBridge.exposeInMainWorld('bubble', {
   moveBubble: (dx, dy) => ipcRenderer.send('move-bubble', { dx, dy }),
   togglePopup: () => ipcRenderer.send('toggle-popup'),
-  onAdaptationPackages: (callback) => { ipcRenderer.on('adaptation-packages', (_, data, uuid, currentMode) => callback(data, uuid, currentMode)); },
+  onAdaptationPackages: (callback) => { ipcRenderer.on('adaptation-packages', (_, data, uuid, currentMode) => callback(data, uuid, currentMode)) },
+  incrementCounter: (callback) => {ipcRenderer.on('counter-up', (_, numPack) => callback(numPack))},
   applyAdaptation: (uuid, pack) => ipcRenderer.send('apply-adaptation', { uuid, pack }),
   askAdaptation: (text, uuid) => ipcRenderer.send('ask-adaptation', { text, uuid }),
   onClearContent: (callback) => ipcRenderer.on('clear-bubble-content', callback),

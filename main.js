@@ -26,7 +26,7 @@ app.whenReady().then(() => {
 
 
   createTray(mainWindow, secondWindow, configWindow);
-  startCommunication(mainWindow, secondWindow, appConfig);
+  startCommunication(mainWindow, secondWindow, bubbleWindow, appConfig);
 });
 
 app.on('window-all-closed', () => {
@@ -42,7 +42,7 @@ ipcMain.on('apply-adaptation', (_, { uuid, pack }) => {
 ipcMain.on('ask-adaptation', (_, { text, uuid }) => {
   try {
     const { monitor, gestor } = getMonitorGestor(uuid);
-    askNewAdaptations(monitor, gestor, text);
+    askNewAdaptations(monitor, gestor, text, bubbleWindow);
   } catch (error) {
     console.error(`[${new Date().toLocaleTimeString()}] ipcMain ask-adaptation error: ${error}.`);
   }

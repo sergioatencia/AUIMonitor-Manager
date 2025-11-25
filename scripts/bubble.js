@@ -1,5 +1,10 @@
+let unreadCount = 0;
+
+
 window.addEventListener('DOMContentLoaded', () => {
   const bubble = document.getElementById('bubble');
+  const counter = document.getElementById('unread-counter');
+
   if (!bubble) return;
 
   let isDragging = false;
@@ -7,6 +12,17 @@ window.addEventListener('DOMContentLoaded', () => {
   let startY = 0;
   let moved = false;
   const MOVE_THRESHOLD = 6;
+
+  function updateCounter() {
+    counter.textContent = unreadCount;
+    counter.style.display = unreadCount > 0 ? 'flex' : 'none';
+    counter.classList.add('pop');
+    setTimeout(() => {
+      counter.classList.remove('pop');
+    }, 500);
+
+  }
+
 
   bubble.addEventListener('pointerdown', (e) => {
     bubble.setPointerCapture(e.pointerId);
@@ -36,6 +52,8 @@ window.addEventListener('DOMContentLoaded', () => {
     try { bubble.releasePointerCapture(e.pointerId); } catch (err) { /* ignore */ }
     if (!moved) {
       window.bubble.togglePopup();
+      unreadCount = 0;
+      updateCounter();
     }
     isDragging = false;
     moved = false;
@@ -47,4 +65,17 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 
   bubble.addEventListener('dragstart', (e) => e.preventDefault());
+
+  if (window.bubble?.incrementCounter) {
+    window.bubble.incrementCounter((numPack) => {
+      unreadCount += numPack;
+      updateCounter();
+    });
+  }
+  if (window.bubble?.onClearContent) {
+    window.bubble.onClearContent(() => {
+      unreadCount = 0;
+      updateCounter();
+    });
+  }
 });

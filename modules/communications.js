@@ -12,8 +12,9 @@ const clients = new Map();
 const monitores = new Map();
 const gestores = new Map();
 const intervals = new Map();
+let analysisFile;
 
-function startCommunication(mainWindow, secondWindow, config) {
+function startCommunication(mainWindow, secondWindow, bubbleWindow, config) {
   const wss = new WebSocket.Server({ port });
   console.log(`[${new Date().toLocaleTimeString()}] WebSocket server running at ws://${url}:${port}.`);
 
@@ -44,6 +45,7 @@ function startCommunication(mainWindow, secondWindow, config) {
         const gestor = gestores.get(ws.uuid);
 
         if (data.type === 'last-session') {
+          const filename = data.filename.replace(/\s+/g, '');
           const sessionsDirFromApp = config?.monitor?.sessionPath;
           const sessionsDir = sessionsDirFromApp || '../user_sessions';
           let resolvedSessionsDir;
@@ -54,9 +56,9 @@ function startCommunication(mainWindow, secondWindow, config) {
           }
 
           //const filePath = path.join(__dirname, '../user_sessions', data.filename);
-          const filePath = path.join(resolvedSessionsDir, data.filename);
+          const filePath = path.join(resolvedSessionsDir, filename);
           fs.mkdirSync(path.dirname(filePath), { recursive: true });
-
+          analysisFile = path.join(__dirname, `${filename.replace(".txt", "")}-analysisUX.log`);
           const content = monitor.generateKnowledgeBase(data.payload);
           await fs.promises.writeFile(filePath, content, 'utf-8');
           //await monitor.bridgesendKnwBase(content);
@@ -71,7 +73,7 @@ function startCommunication(mainWindow, secondWindow, config) {
 
         if (data.type === 'current-state') {
           const navigation = monitor.getNavigationData(data.payload);
-          await processCurrentStatus(navigation, data.payload, monitor, gestor);
+          await processCurrentStatus(navigation, data.payload, monitor, gestor, bubbleWindow);
         }
         monitor.setData(data);
         [mainWindow, secondWindow].forEach(win => {
@@ -100,6 +102,7 @@ function startCommunication(mainWindow, secondWindow, config) {
 
         const popupWindow = getPopupWindow();
         popupWindow.webContents.send('clear-bubble-content');
+        bubbleWindow.webContents.send('clear-bubble-content');
 
       } catch (error) {
         console.error(`[${new Date().toLocaleTimeString()}] Error removing client from server: ${error}.`);
@@ -120,8 +123,9 @@ function sendToClient(uuid, payload) {
   }
 }
 
-async function processCurrentStatus(navigation, data, monitor, gestor) {
+async function processCurrentStatus(navigation, data, monitor, gestor, bubbleWindow) {
   const analysisUX = await monitor.analyzerBridge.analyzeContext(navigation);
+  await saveAnalysis(analysisUX);
   const context = monitor.mergeAnalysisContext(analysisUX, data);
   const resp = await monitor.plannerBridge.planAdapts(context);
   gestor.extractAdaptPack(resp);
@@ -132,6 +136,9 @@ async function processCurrentStatus(navigation, data, monitor, gestor) {
     if (popupWindow && !popupWindow.isDestroyed()) {
       try {
         popupWindow.webContents.send('adaptation-packages', adaptationPackages, gestor.getIdCliente(), gestor.mode);
+        if (!popupWindow.isVisible()) {
+          bubbleWindow.webContents.send('counter-up', adaptationPackages.length);
+        }
       } catch (err) {
         console.error(`[${new Date().toLocaleTimeString()}] Error sending adaptations packages to popup: ${err.message}.`);
       }
@@ -154,7 +161,7 @@ function getMonitorGestor(uuid) {
   }
 }
 
-async function askNewAdaptations(monitor, gestor, prompt) {
+async function askNewAdaptations(monitor, gestor, prompt, bubbleWindow) {
   const resp = await monitor.plannerBridge.moreAdaptations(prompt);
   gestor.extractAdaptPack(resp);
   const adaptationPackages = gestor.getAdaptaciones();
@@ -163,6 +170,9 @@ async function askNewAdaptations(monitor, gestor, prompt) {
     if (popupWindow && !popupWindow.isDestroyed()) {
       try {
         popupWindow.webContents.send('adaptation-packages', adaptationPackages, gestor.getIdCliente(), gestor.mode);
+        if (!popupWindow.isVisible()) {
+          bubbleWindow.webContents.send('counter-up', adaptationPackages.length);
+        }
       } catch (err) {
         console.error(`[${new Date().toLocaleTimeString()}] Error sending MORE adaptations packages to popup: ${err.message}.`);
       }
@@ -207,6 +217,20 @@ async function applyNewConfig(newConfig) {
       await monitor.analyzerBridge.changeModel(newModel);
       await monitor.plannerBridge.changeModel(newModel);
     }
+  }
+}
+
+async function saveAnalysis(analysisUX) {
+  try {
+    const now = new Date();
+    const fecha = now.toLocaleDateString('es-ES');
+    const hora = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+
+    const data = JSON.stringify(analysisUX, null, 2);
+    const entry = `=== [${fecha} ${hora}] ===\n${data}\n\n`;
+    await fs.promises.appendFile(analysisFilePath, entry, 'utf8');
+  } catch (err) {
+    console.error(`Error guardando analysisUX: ${err.message}`);
   }
 }
 
